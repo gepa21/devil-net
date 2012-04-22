@@ -29,7 +29,7 @@ using System.Text;
 namespace DevIL {
 
     [StructLayoutAttribute(LayoutKind.Sequential)]
-    public struct ImageInfo {
+    public struct ILImageInfo {
         public DataFormat Format;
         public CompressedDataFormat DxtcFormat;
         public DataType DataType;
@@ -63,7 +63,7 @@ namespace DevIL {
     }
 
     [StructLayoutAttribute(LayoutKind.Sequential)]
-    public struct Image {
+    public struct ILImageData {
         uint ID;
         IntPtr Data;
         uint Width;

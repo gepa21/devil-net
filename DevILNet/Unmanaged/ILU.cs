@@ -32,6 +32,12 @@ namespace DevIL {
         private const String ILUDLL = "ILU.dll";
         private static bool _init = false;
 
+        public static bool IsInitialized {
+            get {
+                return _init;
+            }
+        }
+
         #region Init
 
         [DllImport(ILUDLL, EntryPoint = "iluInit", CallingConvention = CallingConvention.StdCall)]
@@ -70,7 +76,7 @@ namespace DevIL {
         [return: MarshalAs(UnmanagedType.U1)]
         public static extern bool Crop(uint offsetX, uint offsetY, uint offsetZ, uint width, uint height, uint depth);
 
-        [DllImport(ILUDLL, EntryPoint = "iluBEdgeDetectE", CallingConvention = CallingConvention.StdCall)]
+        [DllImport(ILUDLL, EntryPoint = "iluEdgeDetectE", CallingConvention = CallingConvention.StdCall)]
         [return: MarshalAs(UnmanagedType.U1)]
         public static extern bool EdgeDetectE();
 
@@ -78,9 +84,9 @@ namespace DevIL {
         [return: MarshalAs(UnmanagedType.U1)]
         public static extern bool EdgeDetectP();
 
-        [DllImport(ILUDLL, EntryPoint = "iluEdgeDetects", CallingConvention = CallingConvention.StdCall)]
+        [DllImport(ILUDLL, EntryPoint = "iluEdgeDetectS", CallingConvention = CallingConvention.StdCall)]
         [return: MarshalAs(UnmanagedType.U1)]
-        public static extern bool EdgeDetects();
+        public static extern bool EdgeDetectS();
 
         [DllImport(ILUDLL, EntryPoint = "iluEmboss", CallingConvention = CallingConvention.StdCall)]
         [return: MarshalAs(UnmanagedType.U1)]
@@ -262,6 +268,6 @@ namespace DevIL {
         }
 
         [DllImport(ILUDLL, EntryPoint = "iluGetImageInfo", CallingConvention = CallingConvention.StdCall)]
-        public static extern void GetImage(out Image image);
+        public static extern void GetImage(out ILImageData image);
     }
 }

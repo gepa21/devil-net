@@ -14,6 +14,8 @@ namespace DevIL {
         public const uint IL_TRUE = 1;
         public const uint IL_FALSE = 0;
         public const uint IL_VENDOR = 0x1F00;
+        public const uint IL_LOAD_EXT = 0x1F01;
+        public const uint IL_SAVE_EXT = 0x1F02;
 
         //Data formats
         public const uint IL_COLOR_INDEX = 0x1900;

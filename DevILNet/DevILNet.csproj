@@ -84,14 +84,22 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Enums.cs" />
+    <Compile Include="Collections.cs" />
+    <Compile Include="FilterEngine.cs" />
+    <Compile Include="Image.cs" />
+    <Compile Include="ImageData.cs" />
+    <Compile Include="ImageImporter.cs" />
+    <Compile Include="ImageStates.cs" />
+    <Compile Include="ManagedImage.cs" />
+    <Compile Include="TransformEngine.cs" />
+    <Compile Include="Unmanaged\Enums.cs" />
     <Compile Include="MemoryHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="IL.cs" />
-    <Compile Include="ILU.cs" />
-    <Compile Include="ILDefines.cs" />
-    <Compile Include="ILUDefines.cs" />
-    <Compile Include="Structures.cs" />
+    <Compile Include="Unmanaged\IL.cs" />
+    <Compile Include="Unmanaged\ILU.cs" />
+    <Compile Include="Unmanaged\ILDefines.cs" />
+    <Compile Include="Unmanaged\ILUDefines.cs" />
+    <Compile Include="Unmanaged\Structures.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

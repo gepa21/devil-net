@@ -33,6 +33,12 @@ namespace DevIL {
         private const String DevILDLL = "DevIL.dll";
         private static bool _init = false;
 
+        public static bool IsInitialized {
+            get {
+                return _init;
+            }
+        }
+
         #region Init
 
         [DllImport(DevILDLL, EntryPoint = "ilInit", CallingConvention = CallingConvention.StdCall)]
@@ -92,7 +98,28 @@ namespace DevIL {
 
         #endregion
 
+        #region Saving
+
+        [DllImport(DevILDLL, EntryPoint = "ilSaveImage", CallingConvention = CallingConvention.StdCall)]
+        public static extern bool SaveImage([InAttribute()] [MarshalAs(UnmanagedType.LPStr)] String fileName);
+
+        [DllImport(DevILDLL, EntryPoint = "ilSave", CallingConvention = CallingConvention.StdCall)]
+        private static extern bool ilSave(uint type, [InAttribute()] [MarshalAs(UnmanagedType.LPStr)] String fileName);
+
+        public static bool Save(ImageType type, String filename) {
+            return ilSave((uint) type, filename);
+        }
+
+        #endregion
+
         #region Loading
+
+        [DllImport(DevILDLL, EntryPoint = "ilLoad", CallingConvention = CallingConvention.StdCall)]
+        private static extern bool Load(uint type, [InAttribute()] [MarshalAs(UnmanagedType.LPStr)] String fileName);
+
+        public static bool Load(ImageType type, String filename) {
+            return Load((uint) type, filename);
+        }
 
         [DllImport(DevILDLL, EntryPoint = "ilLoadImage", CallingConvention = CallingConvention.StdCall)]
         [return: MarshalAs(UnmanagedType.U1)]
@@ -166,25 +193,22 @@ namespace DevIL {
 
         #region Get/Set Values
 
-        //TODO: Leave public until we get everything stable
         [DllImport(DevILDLL, EntryPoint = "ilGetInteger", CallingConvention = CallingConvention.StdCall)]
-        public static extern int ilGetInteger(uint mode);
+        private static extern int ilGetInteger(uint mode);
 
         public static int GetInteger(ILIntegerMode mode) {
             return ilGetInteger((uint) mode);
         }
 
-        //TODO: Leave public until we get everything stable
         [DllImport(DevILDLL, EntryPoint = "ilGetIntegerv", CallingConvention = CallingConvention.StdCall)]
-        public static extern void ilGetInteger(uint mode, ref int value);
+        private static extern void ilGetInteger(uint mode, ref int value);
 
         public static void GetInteger(ILIntegerMode mode, ref int value) {
             ilGetInteger((uint) mode, ref value);
         }
 
-        //TODO: Leave public until we get everything stable
         [DllImport(DevILDLL, EntryPoint = "ilSetInteger", CallingConvention = CallingConvention.StdCall)]
-        public static extern void ilSetInteger(uint mode, int value);
+        private static extern void ilSetInteger(uint mode, int value);
 
         public static void SetInteger(ILIntegerMode mode, int value) {
             ilSetInteger((uint) mode, value);
@@ -197,6 +221,29 @@ namespace DevIL {
         public static bool GetBoolean(ILBooleanMode mode) {
             return (ilGetInteger((uint) mode) == 1) ? true : false;
         }
+
+        public static void SetString(ILStringMode mode, String value) {
+            if(value == null) {
+                value = String.Empty;
+            }
+
+            ilSetString((uint)mode, value);
+        }
+
+        public static String GetString(ILStringMode mode) {
+            IntPtr ptr = ilGetString((uint)mode);
+
+            if(ptr != IntPtr.Zero) {
+                return Marshal.PtrToStringAnsi(ptr);
+            }
+            return String.Empty;
+        }
+
+        [DllImport(DevILDLL, EntryPoint = "ilGetString", CallingConvention = CallingConvention.StdCall)]
+        private static extern IntPtr ilGetString(uint stringName);
+
+        [DllImport(DevILDLL, EntryPoint = "ilSetString", CallingConvention = CallingConvention.StdCall)]
+        private static extern void ilSetString(uint stringName, [InAttribute()] [MarshalAs(UnmanagedType.LPStr)] String value);
 
         public static void SetDataFormat(DataFormat format) {
             ilSetInteger(ILDefines.IL_FORMAT_MODE, (int) format);
@@ -223,7 +270,7 @@ namespace DevIL {
         }
 
         [DllImport(DevILDLL, EntryPoint = "ilCompressFunc", CallingConvention = CallingConvention.StdCall)]
-        public static extern void ilCompressFunction(uint mode);
+        private static extern void ilCompressFunction(uint mode);
 
         public static void SetCompression(CompressionAlgorithm compress) {
             ilCompressFunction((uint) compress);
@@ -253,8 +300,8 @@ namespace DevIL {
             return (JpgSaveFormat) ilGetInteger(ILDefines.IL_JPG_SAVE_FORMAT);
         }
 
-        public static ImageInfo GetImageInfo() {
-            ImageInfo info = new ImageInfo();
+        public static ILImageInfo GetImageInfo() {
+            ILImageInfo info = new ILImageInfo();
             info.Format = (DataFormat) ilGetInteger(ILDefines.IL_IMAGE_FORMAT);
             info.DxtcFormat = (CompressedDataFormat) ilGetInteger(ILDefines.IL_DXTC_DATA_FORMAT);
             info.DataType = (DataType) ilGetInteger(ILDefines.IL_IMAGE_TYPE);
@@ -468,6 +515,60 @@ namespace DevIL {
             return type;
         }
 
+        #endregion
+
+        #region Library Info
+
+        public static String GetVendorName() {
+            IntPtr value = ilGetString(ILDefines.IL_VENDOR);
+            if(value != IntPtr.Zero) {
+                return Marshal.PtrToStringAnsi(value);
+            }
+            return "DevIL";
+        }
+
+        public static String GetVersion() {
+            IntPtr value = ilGetString(ILDefines.IL_VERSION_NUM);
+            if(value != IntPtr.Zero) {
+                return Marshal.PtrToStringAnsi(value);
+            }
+            return "Unknown Version";
+        }
+
+        public static String[] GetImportExtensions() {
+            IntPtr value = ilGetString(ILDefines.IL_LOAD_EXT);
+            if(value != IntPtr.Zero) {
+                String ext = Marshal.PtrToStringAnsi(value);
+                String[] exts = ext.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+               
+                for(int i = 0; i < exts.Length; i++) {
+                    String str = exts[i];
+                    //Fix for what looks like a bug: Two entries don't have a space between them, whatmore the dds is
+                    //a duplicate anyways
+                    if(str.Equals("dcmdds")) {
+                        str = str.Substring(0, "dcm".Length); 
+                    }
+                    exts[i] = "." + str;
+                }
+                return exts;
+            }
+            return new String[0];
+        }
+
+        public static String[] GetExportExtensions() {
+            IntPtr value = ilGetString(ILDefines.IL_SAVE_EXT);
+            if(value != IntPtr.Zero) {
+                String ext = Marshal.PtrToStringAnsi(value);
+                String[] exts = ext.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+                for(int i = 0; i < exts.Length; i++) {
+                    exts[i] = "." + exts[i];
+                }
+
+                return exts;
+            }
+            return new String[0];
+        }
         #endregion
 
     }
