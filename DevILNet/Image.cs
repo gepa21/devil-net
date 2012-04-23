@@ -76,9 +76,8 @@ namespace DevIL {
         }
 
         public override string ToString() {
-            return String.Format("ILImage - ID: {0}", m_id);
+            return m_id.ToString();
         }
-
 
         public void Dispose() {
             Dispose(true);
