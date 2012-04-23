@@ -1,5 +1,5 @@
 ﻿namespace DevILNet.Sample {
-    partial class Form1 {
+    partial class ImageViewer {
         /// <summary>
         /// Required designer variable.
         /// </summary>
@@ -23,7 +23,7 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ImageViewer));
             this.pictureBox = new System.Windows.Forms.PictureBox();
             this.filterToolStrip = new System.Windows.Forms.ToolStrip();
             this.alienifyButton = new System.Windows.Forms.ToolStripButton();

@@ -31,14 +31,14 @@ using SD = System.Drawing;
 using SDI = System.Drawing.Imaging;
 
 namespace DevILNet.Sample {
-    public partial class Form1 : Form {
+    public partial class ImageViewer : Form {
         private static String s_image = "DevIL.jpg";
         private ImageImporter m_importer;
         private ImageExporter m_exporter;
         private Image m_activeImage;
         private Image m_copy;
 
-        public Form1() {
+        public ImageViewer() {
             InitializeComponent();
             Text = "Hello you DevIL!";
             this.CenterToScreen();
