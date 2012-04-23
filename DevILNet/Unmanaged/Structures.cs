@@ -21,12 +21,9 @@
 */
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Linq;
-using System.Text;
 
-namespace DevIL {
+namespace DevIL.Unmanaged {
 
     [StructLayout(LayoutKind.Sequential)]
     public struct ImageID : IEquatable<ImageID> {

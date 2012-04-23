@@ -21,13 +21,10 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.IO;
+using System.Runtime.InteropServices;
 
-namespace DevIL {
+namespace DevIL.Unmanaged {
     public static class IL {
 
         private const String ILDLL = "DevIL.dll";
