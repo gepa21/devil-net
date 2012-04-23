@@ -81,15 +81,15 @@ namespace DevIL {
         private static extern bool ilApplyProfile(IntPtr InProfile, IntPtr OutProfile);
         */
 
-        public static void BindImage(int imageID) {
-            if(imageID >= 0) {
-                ilBindImage((uint) imageID);
+        public static void BindImage(ImageID imageID) {
+            if(imageID.ID >= 0) {
+                ilBindImage((uint) imageID.ID);
             }
         }
 
-        public static bool Blit(int srcImageID, int destX, int destY, int destZ, int srcX, int srcY, int srcZ, int width, int height, int depth) {
-            if(srcImageID >= 0) {
-                return ilBlit((uint) srcImageID, destX, destY, destZ, (uint) srcX, (uint) srcY, (uint) srcZ, (uint) width, (uint) height, (uint) depth);
+        public static bool Blit(ImageID srcImageID, int destX, int destY, int destZ, int srcX, int srcY, int srcZ, int width, int height, int depth) {
+            if(srcImageID.ID >= 0) {
+                return ilBlit((uint) srcImageID.ID, destX, destY, destZ, (uint) srcX, (uint) srcY, (uint) srcZ, (uint) width, (uint) height, (uint) depth);
             }
             return false;
         }
@@ -141,8 +141,8 @@ namespace DevIL {
             return ilConvertPal((uint) palType);
         }
 
-        public static bool CopyImage(int srcImageID) {
-            return ilCopyImage((uint) srcImageID);
+        public static bool CopyImage(ImageID srcImageID) {
+            return ilCopyImage((uint) srcImageID.ID);
         }
 
         /// <summary>
@@ -215,14 +215,18 @@ namespace DevIL {
         [return: MarshalAs(UnmanagedType.U1)]
         public static extern bool DefaultImage();
 
-        public static void DeleteImage(int imageID) {
-            ilDeleteImage((uint) imageID);
+        public static void DeleteImage(ImageID imageID) {
+            //Dont delete default, and valid images are non-negative
+            if(imageID > 0)
+                return;
+
+            ilDeleteImage((uint) imageID.ID);
         }
 
-        public static void DeleteImages(int[] imageIDs) {
+        public static void DeleteImages(ImageID[] imageIDs) {
             uint[] ids = new uint[imageIDs.Length];
             for(int i = 0; i < imageIDs.Length; i++) {
-                ids[i] = (uint) imageIDs[i];
+                ids[i] = (uint) imageIDs[i].ID;
             }
 
             UIntPtr size = new UIntPtr((uint) ids.Length);
@@ -295,8 +299,8 @@ namespace DevIL {
         /// Creates an image and returns the image's id.
         /// </summary>
         /// <returns>Generated image id</returns>
-        public static int GenerateImage() {
-            return (int) ilGenImage();
+        public static ImageID GenerateImage() {
+            return new ImageID((int)ilGenImage());
         }
 
         /// <summary>
@@ -304,14 +308,14 @@ namespace DevIL {
         /// </summary>
         /// <param name="count">Number of images to generate</param>
         /// <returns>Generated images</returns>
-        public static int[] GenerateImages(int count) {
+        public static ImageID[] GenerateImages(int count) {
             UIntPtr num = new UIntPtr((uint) count);
             uint[] images = new uint[count];
             ilGenImages(num, images);
 
-            int[] copy = new int[count];
+            ImageID[] copy = new ImageID[count];
             for(int i = 0; i < count; i++) {
-                copy[i] = (int) images[i];
+                copy[i] = new ImageID((int)images[i]);
             }
 
             return copy;
@@ -527,11 +531,11 @@ namespace DevIL {
         /// </summary>
         /// <param name="imageID">Image ID</param>
         /// <returns>True if an image, false otherwise</returns>
-        public static bool IsImage(int imageID) {
-            if(imageID < 0)
+        public static bool IsImage(ImageID imageID) {
+            if(imageID.ID < 0)
                 return false;
 
-            return ilIsImage((uint) imageID);
+            return ilIsImage((uint) imageID.ID);
         }
 
         /// <summary>
@@ -650,12 +654,12 @@ namespace DevIL {
         /// <param name="destY">Destination y offset</param>
         /// <param name="destZ">Destination z offset</param>
         /// <returns></returns>
-        public static bool OverlayImage(int srcImageID, int destX, int destY, int destZ) {
-            if(srcImageID < 0) {
+        public static bool OverlayImage(ImageID srcImageID, int destX, int destY, int destZ) {
+            if(srcImageID.ID < 0) {
                 return false;
             }
 
-            return ilOverlayImage((uint) srcImageID, destX, destY, destZ);
+            return ilOverlayImage((uint) srcImageID.ID, destX, destY, destZ);
         }
 
         [DllImportAttribute(ILDLL, EntryPoint = "ilPopAttrib", CallingConvention = CallingConvention.StdCall)]

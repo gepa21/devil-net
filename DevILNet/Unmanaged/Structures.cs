@@ -29,7 +29,7 @@ using System.Text;
 namespace DevIL {
 
     [StructLayout(LayoutKind.Sequential)]
-    public struct ImageID {
+    public struct ImageID : IEquatable<ImageID> {
         private int m_id;
 
         public int ID {
@@ -49,6 +49,27 @@ namespace DevIL {
         public static implicit operator int(ImageID id) {
             return id.m_id;
         }
+
+        public bool Equals(ImageID other) {
+            return m_id == other.m_id;
+        }
+
+        public override bool Equals(object obj) {
+            if(obj is ImageID) {
+                ImageID other = (ImageID) obj;
+                return m_id == other.m_id;
+            }
+            return false;
+        }
+
+        public override int GetHashCode() {
+            return m_id.GetHashCode();
+        }
+
+        public override string ToString() {
+            return String.Format("ImageID: {0}", m_id.ToString());
+        }
+
     }
 
     [StructLayoutAttribute(LayoutKind.Sequential)]
