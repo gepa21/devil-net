@@ -41,7 +41,7 @@ namespace DevIL {
             lock(m_sync) {
                 CheckDisposed();
 
-                int id = GenImage();
+                ImageID id = GenImage();
 
                 if(IL.LoadImage(filename)) {
                     return new Image(id);
@@ -67,7 +67,7 @@ namespace DevIL {
             lock(m_sync) {
                 CheckDisposed();
 
-                int id = GenImage();
+                ImageID id = GenImage();
 
                 if(IL.LoadImageFromStream(stream)) {
                     return new Image(id);
@@ -93,7 +93,7 @@ namespace DevIL {
             lock(m_sync) {
                 CheckDisposed();
 
-                int id = GenImage();
+                ImageID id = GenImage();
 
                 if(IL.LoadImageFromStream(imageType, stream)) {
                     return new Image(id);
@@ -121,8 +121,8 @@ namespace DevIL {
             }
         }
 
-        private int GenImage() {
-            int id = IL.GenerateImage();
+        private ImageID GenImage() {
+            ImageID id = IL.GenerateImage();
             IL.BindImage(id);
             return id;
         }

@@ -29,19 +29,19 @@ namespace DevIL {
                 return;
             }
 
-            int imageID = (int) image.ImageID;
+            ImageID imageID = image.ImageID;
             LoadFaces(imageID, 0);
             LoadAnimationChain(imageID);
         }
 
-        private ManagedImage(int imageID, int imageNum) {
+        private ManagedImage(ImageID imageID, int imageNum) {
             m_faces = new MipMapChainCollection();
             m_animChain = new AnimationChainCollection();
 
             LoadFaces(imageID, imageNum);
         }
 
-        private void LoadAnimationChain(int imageID) {
+        private void LoadAnimationChain(ImageID imageID) {
             IL.BindImage(imageID);
 
             ImageInfo info = IL.GetImageInfo();
@@ -53,7 +53,7 @@ namespace DevIL {
             }
         }
 
-        private void LoadFaces(int imageID, int imageNum) {
+        private void LoadFaces(ImageID imageID, int imageNum) {
             IL.BindImage(imageID);
             if(!IL.ActiveImage(imageNum))
                 return;
@@ -69,7 +69,7 @@ namespace DevIL {
             }
         }
 
-        private MipMapChain CreateMipMapChain(int imageID, int imageNum, int faceNum) {
+        private MipMapChain CreateMipMapChain(ImageID imageID, int imageNum, int faceNum) {
             IL.BindImage(imageID);
             if(!IL.ActiveImage(imageNum))
                 return null;

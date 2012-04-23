@@ -104,7 +104,7 @@ namespace DevIL {
 
         private ImageData() { }
 
-        internal static ImageData Load(int imageID, int imageNum, int faceNum, int layerNum, int mipMapNum) {
+        internal static ImageData Load(ImageID imageID, int imageNum, int faceNum, int layerNum, int mipMapNum) {
             if(imageID < 0)
                 return null;
 

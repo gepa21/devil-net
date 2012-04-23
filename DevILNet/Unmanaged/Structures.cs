@@ -41,7 +41,7 @@ namespace DevIL {
         public ImageID(int id) {
             m_id = id;
         }
-
+   
         public static implicit operator ImageID(int id) {
             return new ImageID(id);
         }
@@ -49,6 +49,24 @@ namespace DevIL {
         public static implicit operator int(ImageID id) {
             return id.m_id;
         }
+
+        public static bool operator <(ImageID a, ImageID b) {
+            return (a.m_id < b.m_id);
+        }
+
+        public static bool operator >(ImageID a, ImageID b) {
+            return (a.m_id > b.m_id);
+        }
+
+        public static bool operator ==(ImageID a, ImageID b) {
+            return (a.m_id == b.m_id);
+        }
+
+        public static bool operator !=(ImageID a, ImageID b) {
+            return (a.m_id != b.m_id);
+        }
+
+        
 
         public bool Equals(ImageID other) {
             return m_id == other.m_id;
