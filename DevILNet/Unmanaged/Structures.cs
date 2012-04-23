@@ -58,7 +58,7 @@ namespace DevIL {
         public DataType DataType;
         public PaletteType PaletteType;
         public DataFormat PaletteBaseType;
-        public EnvironmentMapFace CubeFlags;
+        public CubeMapFace CubeFlags;
         public OriginLocation Origin;
         public int Width;
         public int Height;
@@ -92,13 +92,13 @@ namespace DevIL {
 
         public bool IsCubeMap {
             get {
-                return CubeFlags != EnvironmentMapFace.None && CubeFlags != EnvironmentMapFace.SphereMap;
+                return CubeFlags != CubeMapFace.None && CubeFlags != CubeMapFace.SphereMap;
             }
         }
 
         public bool IsSphereMap {
             get {
-                return CubeFlags == EnvironmentMapFace.SphereMap;
+                return CubeFlags == CubeMapFace.SphereMap;
             }
         }
     }

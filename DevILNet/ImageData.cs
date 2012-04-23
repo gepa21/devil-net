@@ -10,7 +10,7 @@ namespace DevIL {
         private int m_depth;
         private DataFormat m_format;
         private CompressedDataFormat m_compressedFormat;
-        private EnvironmentMapFace m_face;
+        private CubeMapFace m_face;
         private DataType m_dataType;
         private OriginLocation m_origin;
         private PaletteType m_paletteType;
@@ -66,7 +66,7 @@ namespace DevIL {
             }
         }
 
-        public EnvironmentMapFace CubeFace {
+        public CubeMapFace CubeFace {
             get {
                 return m_face;
             }

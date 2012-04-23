@@ -85,6 +85,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Collections.cs" />
+    <Compile Include="Enums.cs" />
     <Compile Include="FilterEngine.cs" />
     <Compile Include="Image.cs" />
     <Compile Include="ImageData.cs" />

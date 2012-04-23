@@ -455,7 +455,7 @@ namespace DevIL {
             info.DataType = (DataType) ilGetInteger(ILDefines.IL_IMAGE_TYPE);
             info.PaletteType = (PaletteType) ilGetInteger(ILDefines.IL_PALETTE_TYPE);
             info.PaletteBaseType = (DataFormat) ilGetInteger(ILDefines.IL_PALETTE_BASE_TYPE);
-            info.CubeFlags = (EnvironmentMapFace) ilGetInteger(ILDefines.IL_IMAGE_CUBEFLAGS);
+            info.CubeFlags = (CubeMapFace) ilGetInteger(ILDefines.IL_IMAGE_CUBEFLAGS);
             info.Origin = (OriginLocation) ilGetInteger(ILDefines.IL_IMAGE_ORIGIN);
             info.Width = ilGetInteger(ILDefines.IL_IMAGE_WIDTH);
             info.Height = ilGetInteger(ILDefines.IL_IMAGE_HEIGHT);
