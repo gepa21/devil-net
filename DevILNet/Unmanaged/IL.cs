@@ -29,10 +29,34 @@ namespace DevIL.Unmanaged {
 
         private const String ILDLL = "DevIL.dll";
         private static bool _init = false;
+        private static Object s_sync = new Object();
+        private static int s_ref = 0;
 
         public static bool IsInitialized {
             get {
                 return _init;
+            }
+        }
+
+        internal static void AddRef() {
+            lock(s_sync) {
+                if(s_ref == 0) {
+                    IL.Initialize();
+                    ILU.Initialize();
+                }
+                s_ref++;
+            }
+        }
+
+        internal static void Release() {
+            lock(s_sync) {
+                if(s_ref != 0) {
+                    s_ref--;
+
+                    if(s_ref == 0) {
+                        IL.Shutdown();
+                    }
+                }
             }
         }
 
@@ -574,6 +598,9 @@ namespace DevIL.Unmanaged {
         }
 
         public static bool LoadImageFromStream(ImageType imageType, Stream stream) {
+            if(imageType == ImageType.Unknown || stream == null || !stream.CanRead)
+                return false;
+
             byte[] rawData = MemoryHelper.ReadStreamFully(stream, 0);
             uint size = (uint) rawData.Length;
             bool flag = false;
@@ -587,6 +614,9 @@ namespace DevIL.Unmanaged {
         }
 
         public static bool LoadImageFromStream(Stream stream) {
+            if(stream == null || !stream.CanRead)
+                return false;
+
             byte[] rawData = MemoryHelper.ReadStreamFully(stream, 0);
             uint size = (uint) rawData.Length;
             bool flag = false;
@@ -674,7 +704,7 @@ namespace DevIL.Unmanaged {
         }
 
         public static bool SaveImageToStream(ImageType imageType, Stream stream) {
-            if(imageType == ImageType.Unknown || !stream.CanWrite)
+            if(imageType == ImageType.Unknown || stream == null || !stream.CanWrite)
                 return false;
 
             uint size = ilSaveL((uint) imageType, IntPtr.Zero, 0);

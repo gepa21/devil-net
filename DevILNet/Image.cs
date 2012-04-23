@@ -75,6 +75,10 @@ namespace DevIL {
             return clone;
         }
 
+        public ManagedImage ToManaged() {
+            return new ManagedImage(this);
+        }
+
         public bool Equals(Image other) {
             if(other.ImageID == ImageID)
                 return true;

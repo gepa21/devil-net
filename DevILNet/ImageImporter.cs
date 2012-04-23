@@ -30,10 +30,6 @@ namespace DevIL {
         private TransformEngine m_transformEngine;
         private bool m_isDisposed;
 
-        private static int s_ref = 0;
-        private static Object s_sync = new Object();
-        private Object m_sync = new Object();
-
         public FilterEngine Filter {
             get {
                 return m_filterEngine;
@@ -50,89 +46,75 @@ namespace DevIL {
             m_filterEngine = new FilterEngine();
             m_transformEngine = new TransformEngine();
             m_isDisposed = false;
-            AddRef();
+            IL.AddRef();
         }
 
         ~ImageImporter() {
             Dispose(false);
         }
 
-        public Image Load(String filename) {
-            lock(m_sync) {
-                CheckDisposed();
+        public Image LoadImage(String filename) {
+            if(String.IsNullOrEmpty(filename))
+                throw new IOException("Failed to load image, file does not exist.");
 
-                ImageID id = GenImage();
+            CheckDisposed();
 
-                if(IL.LoadImage(filename)) {
-                    return new Image(id);
-                } else {
-                    throw new IOException(String.Format("Failed to loade image: {0}", IL.GetError()));
-                }
+            ImageID id = GenImage();
+
+            if(IL.LoadImage(filename)) {
+                return new Image(id);
+            } else {
+                throw new IOException(String.Format("Failed to loade image: {0}", IL.GetError()));
             }
         }
 
-        public ManagedImage LoadManaged(String filename) {
-            lock(m_sync) {
-                Image image = Load(filename);
-                if(image.IsValid) {
-                    ManagedImage managedImage = new ManagedImage(image);
-                    image.Dispose();
-                    return managedImage;
-                }
-                return null;
+        public Image LoadImage(ImageType imageType, String filename) {
+            if(imageType == ImageType.Unknown || String.IsNullOrEmpty(filename))
+                throw new IOException("Failed to load image, invalid imagetype or file does not exist.");
+
+            CheckDisposed();
+
+            ImageID id = GenImage();
+
+            if(IL.LoadImage(imageType, filename)) {
+                return new Image(id);
+            } else {
+                throw new IOException(String.Format("Failed to loade image: {0}", IL.GetError()));
             }
         }
 
-        public Image Load(Stream stream) {
-            lock(m_sync) {
-                CheckDisposed();
+        public Image LoadImageFromStream(Stream stream) {
+            if(stream == null || !stream.CanRead)
+                throw new IOException("Failed to load image, Stream is null or write-only");
 
-                ImageID id = GenImage();
+            CheckDisposed();
 
-                if(IL.LoadImageFromStream(stream)) {
-                    return new Image(id);
-                } else {
-                    throw new IOException(String.Format("Failed to loade image: {0}", IL.GetError()));
-                }
+            ImageID id = GenImage();
+
+            if(IL.LoadImageFromStream(stream)) {
+                return new Image(id);
+            } else {
+                throw new IOException(String.Format("Failed to loade image: {0}", IL.GetError()));
             }
         }
 
-        public ManagedImage LoadManaged(Stream stream) {
-            lock(m_sync) {
-                Image image = Load(stream);
-                if(image.IsValid) {
-                    ManagedImage managedImage = new ManagedImage(image);
-                    image.Dispose();
-                    return managedImage;
-                }
-                return null;
+        public Image LoadImageFromStream(ImageType imageType, Stream stream) {
+            if(imageType == ImageType.Unknown || stream == null || !stream.CanRead)
+                throw new IOException("Failed to load image, invalid imagetype or stream can't be read from.");
+
+            CheckDisposed();
+
+            ImageID id = GenImage();
+
+            if(IL.LoadImageFromStream(imageType, stream)) {
+                return new Image(id);
+            } else {
+                throw new IOException(String.Format("Failed to load image: {0}", IL.GetError()));
             }
         }
 
-        public Image Load(Stream stream, ImageType imageType) {
-            lock(m_sync) {
-                CheckDisposed();
-
-                ImageID id = GenImage();
-
-                if(IL.LoadImageFromStream(imageType, stream)) {
-                    return new Image(id);
-                } else {
-                    throw new IOException(String.Format("Failed to loade image: {0}", IL.GetError()));
-                }
-            }
-        }
-
-        public ManagedImage LoadManaged(Stream stream, ImageType imageType) {
-            lock(m_sync) {
-                Image image = Load(stream, imageType);
-                if(image.IsValid) {
-                    ManagedImage managedImage = new ManagedImage(image);
-                    image.Dispose();
-                    return managedImage;
-                }
-                return null;
-            }
+        public String[] GetSupportedExtensions() {
+            return IL.GetImportExtensions();
         }
 
         private void CheckDisposed() {
@@ -155,29 +137,9 @@ namespace DevIL {
         private void Dispose(bool disposing) {
             if(!m_isDisposed) {
 
-                Release();
+                IL.Release();
 
                 m_isDisposed = true;
-            }
-        }
-
-        private static void AddRef() {
-            lock(s_sync) {
-                if(s_ref == 0) {
-                    IL.Initialize();
-                    ILU.Initialize();
-                }
-                s_ref++;
-            }
-        }
-
-        private static void Release() {
-            lock(s_sync) {
-                s_ref--;
-
-                if(s_ref == 0) {
-                    IL.Shutdown();
-                }
             }
         }
     }

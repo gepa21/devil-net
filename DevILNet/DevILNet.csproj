@@ -89,6 +89,7 @@
     <Compile Include="FilterEngine.cs" />
     <Compile Include="Image.cs" />
     <Compile Include="ImageData.cs" />
+    <Compile Include="ImageExporter.cs" />
     <Compile Include="ImageImporter.cs" />
     <Compile Include="ImageStates.cs" />
     <Compile Include="ManagedImage.cs" />

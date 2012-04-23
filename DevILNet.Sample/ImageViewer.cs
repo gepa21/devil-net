@@ -104,7 +104,7 @@ namespace DevILNet.Sample {
 
         private void LoadImage(Stream stream) {
             try {
-                m_activeImage = m_importer.Load(stream);
+                m_activeImage = m_importer.LoadImageFromStream(stream);
                 m_copy = m_activeImage.Clone();
             } catch(Exception) {
                 m_activeImage = null;
