@@ -29,7 +29,7 @@ namespace DevIL {
     /// <summary>
     /// Enumerates data types.
     /// </summary>
-    public enum DataType : uint {
+    public enum DataType {
         /// <summary>
         /// 8-Bit signed byte.
         /// </summary>
@@ -80,7 +80,7 @@ namespace DevIL {
     /// <summary>
     /// Enumerates uncompressed data formats.
     /// </summary>
-    public enum DataFormat : uint {
+    public enum DataFormat {
         ColorIndex = ILDefines.IL_COLOR_INDEX,
         Alpha = ILDefines.IL_ALPHA,
         RGB = ILDefines.IL_RGB,
@@ -94,7 +94,7 @@ namespace DevIL {
     /// <summary>
     /// Enumerates compressed data formats.
     /// </summary>
-    public enum CompressedDataFormat : uint {
+    public enum CompressedDataFormat {
         /// <summary>
         /// No compression.
         /// </summary>
@@ -159,7 +159,7 @@ namespace DevIL {
     /// <summary>
     /// Enumerates error types.
     /// </summary>
-    public enum ErrorType : uint {
+    public enum ErrorType {
 
         /// <summary>
         /// Everything's A-OK, no error reported.
@@ -306,7 +306,7 @@ namespace DevIL {
     /// Enumerates attribute bit flags.
     /// </summary>
     [Flags]
-    public enum AttributeBits : uint {
+    public enum AttributeBits {
         Origin = ILDefines.IL_ORIGIN_BIT,
         File = ILDefines.IL_FILE_BIT,
         Palette = ILDefines.IL_PAL_BIT,
@@ -318,7 +318,7 @@ namespace DevIL {
         All = ILDefines.IL_ALL_ATTRIB_BITS
     }
 
-    public enum OriginLocation : uint {
+    public enum OriginLocation {
         LowerLeft = ILDefines.IL_ORIGIN_LOWER_LEFT,
         UpperLeft = ILDefines.IL_ORIGIN_UPPER_LEFT
     }
@@ -326,7 +326,7 @@ namespace DevIL {
     /// <summary>
     /// Enumerates palette types.
     /// </summary>
-    public enum PaletteType : uint {
+    public enum PaletteType {
         None = ILDefines.IL_PAL_NONE,
         RGB24 = ILDefines.IL_PAL_RGB24,
         RGB32 = ILDefines.IL_PAL_RGB32,
@@ -336,7 +336,7 @@ namespace DevIL {
         BGRA32 = ILDefines.IL_PAL_BGRA32
     }
 
-    public enum CompressionAlgorithm : uint {
+    public enum CompressionAlgorithm {
         None = ILDefines.IL_COMPRESS_NONE,
         RLE = ILDefines.IL_COMPRESS_RLE,
         ZLib = ILDefines.IL_COMPRESS_ZLIB,
@@ -348,7 +348,7 @@ namespace DevIL {
         Squish
     }
 
-    public enum Quantization : uint {
+    public enum Quantization {
         Wu = ILDefines.IL_WU_QUANT,
         Neu = ILDefines.IL_NEU_QUANT
     }
@@ -358,7 +358,12 @@ namespace DevIL {
     /// a sphere map.
     /// </summary>
     [Flags]
-    public enum EnvironmentMapFace : uint {
+    public enum EnvironmentMapFace {
+        /// <summary>
+        /// No face defined.
+        /// </summary>
+        None = 0,
+
         /// <summary>
         /// Positive X.
         /// </summary>
@@ -398,7 +403,7 @@ namespace DevIL {
     /// <summary>
     /// Enumerates image types that can be loaded by DevIL.
     /// </summary>
-    public enum ImageType : uint {
+    public enum ImageType {
         /// <summary>
         /// Unknown image type.
         /// </summary>
@@ -665,7 +670,7 @@ namespace DevIL {
         Mp3 = 0x0452
     }
 
-    public enum JpgSaveFormat : uint {
+    public enum JpgSaveFormat {
         Jpg = ILDefines.IL_JPG,
         Jfif = ILDefines.IL_JFIF
     }
@@ -674,7 +679,7 @@ namespace DevIL {
     /// Enumerates possible enable caps for DevIL's Enable/Disable function to enable/disable
     /// certain behaviors by the library.
     /// </summary>
-    public enum ILEnable : uint {
+    public enum ILEnable {
         /// <summary>
         /// If enabled, DevIL will convert (if need be) all images to the same data format (BGR, RGB, etc) that is specified by the user.
         /// </summary>
@@ -741,7 +746,7 @@ namespace DevIL {
         JpgProgressive = ILDefines.IL_JPG_PROGRESSIVE
     }
 
-    public enum ILIntegerMode : uint {
+    public enum ILIntegerMode {
         CurrentImage = ILDefines.IL_CUR_IMAGE,
         MaxQuantizationIndices = ILDefines.IL_MAX_QUANT_INDICES,
         NeuQuantizationSample = ILDefines.IL_NEU_QUANT_SAMPLE,
@@ -774,7 +779,7 @@ namespace DevIL {
         ImagePaletteColumnCount = ILDefines.IL_PALETTE_NUM_COLS
     }
 
-    public enum ILBooleanMode : uint {
+    public enum ILBooleanMode {
         KeepDxtcData = ILDefines.IL_KEEP_DXTC_DATA,
         BmpRLE = ILDefines.IL_BMP_RLE,
         PngInterlace = ILDefines.IL_PNG_INTERLACE,
@@ -783,7 +788,7 @@ namespace DevIL {
         TgaRLE = ILDefines.IL_TGA_RLE
     }
 
-    public enum ILStringMode : uint {
+    public enum ILStringMode {
         TgaID = ILDefines.IL_TGA_ID_STRING,
         TgaAuthorName = ILDefines.IL_TGA_AUTHNAME_STRING,
         TgaAuthorComment = ILDefines.IL_TGA_AUTHCOMMENT_STRING,
@@ -797,24 +802,22 @@ namespace DevIL {
         CHeadHeader = ILDefines.IL_CHEAD_HEADER_STRING
     }
 
-    public enum Hint : uint {
+    public enum MemoryHint {
         Fastest = ILDefines.IL_FASTEST,
         LessMemory = ILDefines.IL_LESS_MEM,
+        DontCare = ILDefines.IL_DONT_CARE
+    }
+
+    public enum CompressionHint {
         UseCompression = ILDefines.IL_USE_COMPRESSION,
         NoCompression = ILDefines.IL_NO_COMPRESSION,
         DontCare = ILDefines.IL_DONT_CARE
     }
-
-    public enum HintType : uint {
-        MemorySpeed = ILDefines.IL_MEM_SPEED_HINT,
-        Compression = ILDefines.IL_COMPRESSION_HINT
-    }
-
     /// <summary>
     /// Enumerates the available error string translations for
     /// <see cref="ILU.GetErrorString"/>.
     /// </summary>
-    public enum Language : uint {
+    public enum Language {
         English = ILUDefines.ILU_ENGLISH,
         Arabic = ILUDefines.ILU_ARABIC,
         Dutch = ILUDefines.ILU_DUTCH,
@@ -828,7 +831,7 @@ namespace DevIL {
     /// Enumerates the filter used in <see cref="ILU.Scale"/>. The default
     /// is Nearest.
     /// </summary>
-    public enum SamplingFilter : uint {
+    public enum SamplingFilter {
         /// <summary>
         /// Uses a nearest filter to scale the image
         /// </summary>
@@ -880,7 +883,7 @@ namespace DevIL {
     /// Enumerates possible image placements for the <see cref="ILU.EnlargeCanvas"/> function.
     /// The default is Center.
     /// </summary>
-    public enum Placement : uint {
+    public enum Placement {
         /// <summary>
         /// Places the image in the lower left of the enlarged canvas.
         /// </summary>
@@ -905,5 +908,25 @@ namespace DevIL {
         /// Places the image in the center of the enlarged canvas.
         /// </summary>
         Center = ILUDefines.ILU_CENTER
+    }
+
+    /// <summary>
+    /// Enumerates sub image types.
+    /// </summary>
+    public enum SubImageType {
+        /// <summary>
+        /// Denotes a "next" image in the chain, e.g. animation or face.
+        /// </summary>
+        Image = (int) ILDefines.IL_SUB_NEXT,
+
+        /// <summary>
+        /// Denotes a mipmap.
+        /// </summary>
+        MipMap = (int) ILDefines.IL_SUB_MIPMAP,
+
+        /// <summary>
+        /// Denotes a layer.
+        /// </summary>
+        Layer = (int) ILDefines.IL_SUB_LAYER
     }
 }
