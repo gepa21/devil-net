@@ -34,6 +34,7 @@ namespace DevILNet.Sample {
     public partial class Form1 : Form {
         private static String s_image = "DevIL.jpg";
         private ImageImporter m_importer;
+        private ImageExporter m_exporter;
         private Image m_activeImage;
         private Image m_copy;
 
@@ -50,6 +51,7 @@ namespace DevILNet.Sample {
 
         private void InitDevIL() {
             m_importer = new ImageImporter();
+            m_exporter = new ImageExporter();
             ImageState state = new ImageState();
             state.AbsoluteFormat = DataFormat.BGRA;
             state.AbsoluteDataType = DataType.UnsignedByte;
@@ -72,10 +74,10 @@ namespace DevILNet.Sample {
         }
 
         private void SetUpFileExtensions() {
-            openFileDialog.Filter = CreateFilter(IL.GetImportExtensions());
+            openFileDialog.Filter = CreateFilter(m_importer.GetSupportedExtensions());
             openFileDialog.Title = "Open an Image File";
             openFileDialog.AddExtension = true;
-            saveFileDialog.Filter = CreateFilter(IL.GetExportExtensions());
+            saveFileDialog.Filter = CreateFilter(m_exporter.GetSupportedExtensions());
             saveFileDialog.Title = "Save an Image File";
         }
 
@@ -235,8 +237,7 @@ namespace DevILNet.Sample {
             DialogResult result = saveFileDialog.ShowDialog();
 
             if(result == System.Windows.Forms.DialogResult.OK) {
-                m_activeImage.Bind();
-                IL.SaveImage(saveFileDialog.FileName);
+                m_exporter.SaveImage(m_activeImage, saveFileDialog.FileName);
             }
         }
 
