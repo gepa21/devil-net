@@ -31,6 +31,21 @@ namespace DevIL {
     public static class MemoryHelper {
 
         /// <summary>
+        /// Reads a byte buffer from unmanaged memory.
+        /// </summary>
+        /// <param name="pointer">Pointer to unmanaged memory</param>
+        /// <param name="numBytes">Number of bytes to read</param>
+        /// <returns>Byte buffer, or null if the pointer was no valid</returns>
+        public static byte[] ReadByteBuffer(IntPtr pointer, int numBytes) {
+            if(pointer == IntPtr.Zero)
+                return null;
+
+            byte[] bytes = new byte[numBytes];
+            Marshal.Copy(pointer, bytes, 0, numBytes);
+            return bytes;
+        }
+
+        /// <summary>
         /// Marshals a c-style pointer array to a managed array of structs. This will read
         /// from the start of the IntPtr provided and care should be taken in ensuring that the number
         /// of elements to read is correct.
@@ -164,6 +179,132 @@ namespace DevIL {
                 return down;
             }
             return up;
+        }
+
+        /// <summary>
+        /// Gets the number of components for the format, e.g. RGB is three components. Multiply this
+        /// by the size of each component to get the "BPP - bytes per pixel".
+        /// </summary>
+        /// <param name="format">DataFormat</param>
+        /// <returns>Number of components.</returns>
+        public static int GetFormatComponentCount(DataFormat format) {
+            switch(format) {
+                case DataFormat.ColorIndex:
+                case DataFormat.Luminance:
+                case DataFormat.Alpha:
+                    return 1;
+                case DataFormat.LuminanceAlpha:
+                    return 2;
+                case DataFormat.RGB:
+                case DataFormat.BGR:
+                    return 3;
+                case DataFormat.RGBA:
+                case DataFormat.BGRA:
+                    return 4;
+                default:
+                    return 0;
+            }
+        }
+
+        /// <summary>
+        /// Gets the palette's component/channel count.
+        /// </summary>
+        /// <param name="palette">Palette</param>
+        /// <returns>Number of components/channels in the palette</returns>
+        public static int GetPaletteComponentCount(PaletteType palette) {
+            switch(palette) {
+                case PaletteType.RGB24:
+                case PaletteType.BGR24:
+                    return 3;
+                case PaletteType.RGB32:
+                case PaletteType.RGBA32:
+                case PaletteType.BGR32:
+                case PaletteType.BGRA32:
+                    return 4;
+                default:
+                    return 0;
+            }
+        }
+
+        /// <summary>
+        /// Gets the palette's base format.
+        /// </summary>
+        /// <param name="palette">Palette</param>
+        /// <returns>Base format</returns>
+        public static DataFormat GetPaletteBaseFormat(PaletteType palette) {
+            switch(palette) {
+                case PaletteType.RGB24:
+                    return DataFormat.RGB;
+                case PaletteType.RGB32:
+                    return DataFormat.RGBA; //DevIL says its not sure
+                case PaletteType.RGBA32:
+                    return DataFormat.RGBA;
+                case PaletteType.BGR24:
+                    return DataFormat.BGR;
+                case PaletteType.BGR32:
+                    return DataFormat.BGRA; //DevIL says its not sure
+                case PaletteType.BGRA32:
+                    return DataFormat.BGRA;
+                default:
+                    return DataFormat.RGBA;
+            }
+        }
+
+        /// <summary>
+        /// Gets the size of the data type. This will be the "bytes per component or channel" or BPC.
+        /// </summary>
+        /// <param name="dataType">DataType</param>
+        /// <returns>Bytes per component/channel</returns>
+        public static int GetDataTypeSize(DataType dataType) {
+            switch(dataType) {
+                case DataType.Byte:
+                case DataType.UnsignedByte:
+                    return 1;
+                case DataType.Short:
+                case DataType.UnsignedShort:
+                case DataType.Half:
+                    return 2;
+                case DataType.Int:
+                case DataType.UnsignedInt:
+                case DataType.Float:
+                    return 4;
+                case DataType.Double:
+                    return 8;
+                default:
+                    return 0;
+            }
+        }
+
+        /// <summary>
+        /// Calculates the bytes per pixel for the specified format/data type.
+        /// </summary>
+        /// <param name="format">DataFormat</param>
+        /// <param name="dataType">DataType</param>
+        /// <returns>bytes per pixel</returns>
+        public static int GetBpp(DataFormat format, DataType dataType) {
+            return GetDataTypeSize(dataType) * GetFormatComponentCount(format);
+        }
+
+        /// <summary>
+        /// Calculates the total (uncompressed) size of the data specified by these dimensions and data format/type.
+        /// </summary>
+        /// <param name="width">Width of the image</param>
+        /// <param name="height">Height of the image</param>
+        /// <param name="depth">Depth of the image</param>
+        /// <param name="format">DataFormat</param>
+        /// <param name="dataType">DataType</param>
+        /// <returns>Total size of the image, in bytes</returns>
+        public static int GetDataSize(int width, int height, int depth, DataFormat format, DataType dataType) {
+            if(width <= 0) {
+                width = 1;
+            }
+            if(height <= 0) {
+                height = 1;
+            }
+            if(depth <= 0) {
+                depth = 1;
+            }
+            return width * height * depth * GetBpp(format, dataType);
         }
 
         /// <summary>

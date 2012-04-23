@@ -38,43 +38,38 @@ namespace DevIL {
             }
         }
 
-        #region Init
+        #region ILU Methods
 
-        [DllImport(ILUDLL, EntryPoint = "iluInit", CallingConvention = CallingConvention.StdCall)]
-        private static extern void iluInit();
-
-        public static void Init() {
+        public static void Initialize() {
             if(!_init) {
                 iluInit();
                 _init = true;
             }
         }
 
-        #endregion
-
         [DllImport(ILUDLL, EntryPoint = "iluAlienify", CallingConvention = CallingConvention.StdCall)]
         [return: MarshalAs(UnmanagedType.U1)]
         public static extern bool Alienify();
 
-        [DllImport(ILUDLL, EntryPoint = "iluBlurAvg", CallingConvention = CallingConvention.StdCall)]
-        [return: MarshalAs(UnmanagedType.U1)]
-        public static extern bool BlurAverage(uint iterations);
+        public static bool BlurAverage(int iterations) {
+            return iluBlurAverage((uint) iterations);
+        }
 
-        [DllImport(ILUDLL, EntryPoint = "iluBlurGaussian", CallingConvention = CallingConvention.StdCall)]
-        [return: MarshalAs(UnmanagedType.U1)]
-        public static extern bool BlurGaussian(uint iterations);
+        public static bool BlurGaussian(int iterations) {
+            return iluBlurGaussian((uint) iterations);
+        }
 
-        [DllImport(ILUDLL, EntryPoint = "iluCompareImage", CallingConvention = CallingConvention.StdCall)]
-        [return: MarshalAs(UnmanagedType.U1)]
-        public static extern bool CompareImages(uint otherImage);
+        public static bool CompareImages(int otherImageID) {
+            return iluCompareImages((uint) otherImageID);
+        }
+
+        public static bool Crop(int xOffset, int yOffset, int zOffset, int width, int height, int depth) {
+            return iluCrop((uint) xOffset, (uint) yOffset, (uint) zOffset, (uint) width, (uint) height, (uint) depth);
+        }
 
         [DllImport(ILUDLL, EntryPoint = "iluContrast", CallingConvention = CallingConvention.StdCall)]
         [return: MarshalAs(UnmanagedType.U1)]
         public static extern bool Contrast(float contrast);
-
-        [DllImport(ILUDLL, EntryPoint = "iluCrop", CallingConvention = CallingConvention.StdCall)]
-        [return: MarshalAs(UnmanagedType.U1)]
-        public static extern bool Crop(uint offsetX, uint offsetY, uint offsetZ, uint width, uint height, uint depth);
 
         [DllImport(ILUDLL, EntryPoint = "iluEdgeDetectE", CallingConvention = CallingConvention.StdCall)]
         [return: MarshalAs(UnmanagedType.U1)]
@@ -92,24 +87,21 @@ namespace DevIL {
         [return: MarshalAs(UnmanagedType.U1)]
         public static extern bool Emboss();
 
-        [DllImport(ILUDLL, EntryPoint = "iluEnlargeCanvas", CallingConvention = CallingConvention.StdCall)]
-        [return: MarshalAs(UnmanagedType.U1)]
-        public static extern bool EnlargeCanvas(uint width, uint height, uint depth);
+        public static bool EnlargeCanvas(int width, int height, int depth) {
+            return iluEnlargeCanvas((uint) width, (uint) height, (uint) depth);
+        }
 
-        [DllImport(ILUDLL, EntryPoint = "iluEnlargeImage", CallingConvention = CallingConvention.StdCall)]
-        [return: MarshalAs(UnmanagedType.U1)]
-        public static extern bool EnlargeImage(uint xDim, uint yDim, uint zDim);
+        public static bool EnlargeImage(int xDimension, int yDimension, int zDimension) {
+            return iluEnlargeImage((uint) xDimension, (uint) yDimension, (uint) zDimension);
+        }
 
         [DllImport(ILUDLL, EntryPoint = "iluEqualize", CallingConvention = CallingConvention.StdCall)]
         [return: MarshalAs(UnmanagedType.U1)]
         public static extern bool Equalize();
 
-        [DllImport(ILUDLL, EntryPoint = "iluErrorString", CallingConvention = CallingConvention.StdCall)]
-        private static extern IntPtr GetErrorString(uint error);
-
         public static String GetErrorString(ErrorType error) {
             //DevIL re-uses its error strings
-            return Marshal.PtrToStringAnsi(GetErrorString((uint) error));
+            return Marshal.PtrToStringAnsi(iluGetErrorString((uint) error));
         }
 
         /// <summary>
@@ -127,16 +119,17 @@ namespace DevIL {
         [return: MarshalAs(UnmanagedType.U1)]
         public static extern bool FlipImage();
 
-                [DllImport(ILUDLL, EntryPoint = "iluBuildMipmaps", CallingConvention = CallingConvention.StdCall)]
+        [DllImport(ILUDLL, EntryPoint = "iluBuildMipmaps", CallingConvention = CallingConvention.StdCall)]
         [return: MarshalAs(UnmanagedType.U1)]
         public static extern bool BuildMipMaps();
 
-        [DllImport(ILUDLL, EntryPoint = "iluColoursUsed", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint ColorsUsed();
+        public static int ColorsUsed() {
+            return (int) iluColorsUsed();
+        }
 
-        [DllImport(ILUDLL, EntryPoint = "iluScale", CallingConvention = CallingConvention.StdCall)]
-        [return: MarshalAs(UnmanagedType.U1)]
-        public static extern bool Scale(int width, int height, int depth);
+        public static bool Scale(int width, int height, int depth) {
+            return iluScale((uint) width, (uint) height, (uint) depth);
+        }
 
         [DllImport(ILUDLL, EntryPoint = "iluGammaCorrect", CallingConvention = CallingConvention.StdCall)]
         [return: MarshalAs(UnmanagedType.U1)]
@@ -162,9 +155,9 @@ namespace DevIL {
             return iluNoisify(MemoryHelper.Clamp(tolerance, 0f, 1f));
         }
 
-        [DllImport(ILUDLL, EntryPoint = "iluPixelize", CallingConvention = CallingConvention.StdCall)]
-        [return: MarshalAs(UnmanagedType.U1)]
-        public static extern bool Pixelize(uint pixelSize);
+        public static bool Pixelize(int pixelSize) {
+            return iluPixelize((uint) pixelSize);
+        }
 
         [DllImport(ILUDLL, EntryPoint = "iluReplaceColour", CallingConvention = CallingConvention.StdCall)]
         [return: MarshalAs(UnmanagedType.U1)]
@@ -202,9 +195,9 @@ namespace DevIL {
             return iluSetLanguage((uint) lang);
         }
 
-        [DllImport(ILUDLL, EntryPoint = "iluSharpen", CallingConvention = CallingConvention.StdCall)]
-        [return: MarshalAs(UnmanagedType.U1)]
-        public static extern bool Sharpen(float factor, uint iterations);
+        public static bool Sharpen(float factor, int iterations) {
+            return iluSharpen(factor, (uint) iterations);
+        }
 
         [DllImport(ILUDLL, EntryPoint = "iluSwapColours", CallingConvention = CallingConvention.StdCall)]
         [return: MarshalAs(UnmanagedType.U1)]
@@ -214,9 +207,6 @@ namespace DevIL {
         [return: MarshalAs(UnmanagedType.U1)]
         public static extern bool Wave(float angle);
 
-        [DllImport(ILUDLL, EntryPoint = "iluGetString", CallingConvention = CallingConvention.StdCall)]
-        private static extern IntPtr iluGetString(uint name);
-
         public static String GetVendorName() {
             return Marshal.PtrToStringAnsi(iluGetString(ILDefines.IL_VENDOR));
         }
@@ -224,12 +214,6 @@ namespace DevIL {
         public static String GetVersionNumber() {
             return Marshal.PtrToStringAnsi(iluGetString(ILDefines.IL_VERSION_NUM));
         }
-
-        [DllImport(ILUDLL, EntryPoint = "iluImageParameter", CallingConvention = CallingConvention.StdCall)]
-        private static extern void iluImageParameter(uint pName, uint param);
-
-        [DllImport(ILUDLL, EntryPoint = "iluGetInteger", CallingConvention = CallingConvention.StdCall)]
-        private static extern int iluGetInteger(uint mode);
 
         public static void SetImagePlacement(Placement placement) {
             iluImageParameter(ILUDefines.ILU_PLACEMENT, (uint) placement);
@@ -239,19 +223,13 @@ namespace DevIL {
             return (Placement) iluGetInteger(ILUDefines.ILU_PLACEMENT);
         }
 
-        public static void SetImageFilter(SamplingFilter filter) {
+        public static void SetSamplingFilter(SamplingFilter filter) {
             iluImageParameter(ILUDefines.ILU_FILTER, (uint) filter);
         }
 
-        public static SamplingFilter GetImageFilter() {
+        public static SamplingFilter GetSamplingFilter() {
             return (SamplingFilter) iluGetInteger(ILUDefines.ILU_FILTER);
         }
-
-        [DllImport(ILUDLL, EntryPoint = "iluRegionfv", CallingConvention = CallingConvention.StdCall)]
-        private static extern void iluRegionf(PointF[] points, uint num);
-
-        [DllImport(ILUDLL, EntryPoint = "iluRegioniv", CallingConvention = CallingConvention.StdCall)]
-        private static extern void iluRegioni(PointI[] points, uint num);
 
         public static void Region(PointF[] points) {
             if(points == null || points.Length < 3) {
@@ -267,7 +245,70 @@ namespace DevIL {
             iluRegioni(points, (uint) points.Length);
         }
 
-        [DllImport(ILUDLL, EntryPoint = "iluGetImageInfo", CallingConvention = CallingConvention.StdCall)]
-        public static extern void GetImage(out ILImageData image);
+        #endregion
+
+        #region ILU Native Methods
+
+        [DllImport(ILUDLL, EntryPoint = "iluInit", CallingConvention = CallingConvention.StdCall)]
+        private static extern void iluInit();
+
+        [DllImport(ILUDLL, EntryPoint = "iluBlurAvg", CallingConvention = CallingConvention.StdCall)]
+        [return: MarshalAs(UnmanagedType.U1)]
+        private static extern bool iluBlurAverage(uint iterations);
+
+        [DllImport(ILUDLL, EntryPoint = "iluBlurGaussian", CallingConvention = CallingConvention.StdCall)]
+        [return: MarshalAs(UnmanagedType.U1)]
+        private static extern bool iluBlurGaussian(uint iterations);
+
+        [DllImport(ILUDLL, EntryPoint = "iluCompareImage", CallingConvention = CallingConvention.StdCall)]
+        [return: MarshalAs(UnmanagedType.U1)]
+        private static extern bool iluCompareImages(uint otherImage);
+
+        [DllImport(ILUDLL, EntryPoint = "iluCrop", CallingConvention = CallingConvention.StdCall)]
+        [return: MarshalAs(UnmanagedType.U1)]
+        private static extern bool iluCrop(uint offsetX, uint offsetY, uint offsetZ, uint width, uint height, uint depth);
+
+        [DllImport(ILUDLL, EntryPoint = "iluEnlargeCanvas", CallingConvention = CallingConvention.StdCall)]
+        [return: MarshalAs(UnmanagedType.U1)]
+        private static extern bool iluEnlargeCanvas(uint width, uint height, uint depth);
+
+        [DllImport(ILUDLL, EntryPoint = "iluEnlargeImage", CallingConvention = CallingConvention.StdCall)]
+        [return: MarshalAs(UnmanagedType.U1)]
+        private static extern bool iluEnlargeImage(uint xDim, uint yDim, uint zDim);
+
+        [DllImport(ILUDLL, EntryPoint = "iluErrorString", CallingConvention = CallingConvention.StdCall)]
+        private static extern IntPtr iluGetErrorString(uint error);
+
+        [DllImport(ILUDLL, EntryPoint = "iluColoursUsed", CallingConvention = CallingConvention.StdCall)]
+        private static extern uint iluColorsUsed();
+
+        [DllImport(ILUDLL, EntryPoint = "iluScale", CallingConvention = CallingConvention.StdCall)]
+        [return: MarshalAs(UnmanagedType.U1)]
+        private static extern bool iluScale(uint width, uint height, uint depth);
+
+        [DllImport(ILUDLL, EntryPoint = "iluPixelize", CallingConvention = CallingConvention.StdCall)]
+        [return: MarshalAs(UnmanagedType.U1)]
+        private static extern bool iluPixelize(uint pixelSize);
+
+        [DllImport(ILUDLL, EntryPoint = "iluSharpen", CallingConvention = CallingConvention.StdCall)]
+        [return: MarshalAs(UnmanagedType.U1)]
+        private static extern bool iluSharpen(float factor, uint iterations);
+
+        [DllImport(ILUDLL, EntryPoint = "iluGetString", CallingConvention = CallingConvention.StdCall)]
+        private static extern IntPtr iluGetString(uint name);
+
+        [DllImport(ILUDLL, EntryPoint = "iluImageParameter", CallingConvention = CallingConvention.StdCall)]
+        private static extern void iluImageParameter(uint pName, uint param);
+
+        [DllImport(ILUDLL, EntryPoint = "iluGetInteger", CallingConvention = CallingConvention.StdCall)]
+        private static extern int iluGetInteger(uint mode);
+
+        [DllImport(ILUDLL, EntryPoint = "iluRegionfv", CallingConvention = CallingConvention.StdCall)]
+        private static extern void iluRegionf(PointF[] points, uint num);
+
+        [DllImport(ILUDLL, EntryPoint = "iluRegioniv", CallingConvention = CallingConvention.StdCall)]
+        private static extern void iluRegioni(PointI[] points, uint num);
+
+        #endregion
     }
 }

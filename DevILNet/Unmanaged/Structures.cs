@@ -28,8 +28,31 @@ using System.Text;
 
 namespace DevIL {
 
+    [StructLayout(LayoutKind.Sequential)]
+    public struct ImageID {
+        private int m_id;
+
+        public int ID {
+            get {
+                return m_id;
+            }
+        }
+
+        public ImageID(int id) {
+            m_id = id;
+        }
+
+        public static implicit operator ImageID(int id) {
+            return new ImageID(id);
+        }
+
+        public static implicit operator int(ImageID id) {
+            return id.m_id;
+        }
+    }
+
     [StructLayoutAttribute(LayoutKind.Sequential)]
-    public struct ILImageInfo {
+    public struct ImageInfo {
         public DataFormat Format;
         public CompressedDataFormat DxtcFormat;
         public DataType DataType;
@@ -60,27 +83,24 @@ namespace DevIL {
                 return DxtcFormat != CompressedDataFormat.None;
             }
         }
-    }
 
-    [StructLayoutAttribute(LayoutKind.Sequential)]
-    public struct ILImageData {
-        uint ID;
-        IntPtr Data;
-        uint Width;
-        uint Height;
-        uint Depth;
-        byte BPP;
-        uint SizeOfData;
-        DataFormat Format;
-        DataType Type;
-        OriginLocation Origin;
-        IntPtr Palette;
-        PaletteType PalType;
-        uint PalSize;
-        EnvironmentMapFace CubeFlags;
-        uint NumNext;
-        uint NumMips;
-        uint NumLayers;
+        public bool HasPalette {
+            get {
+                return PaletteType != DevIL.PaletteType.None;
+            }
+        }
+
+        public bool IsCubeMap {
+            get {
+                return CubeFlags != EnvironmentMapFace.None && CubeFlags != EnvironmentMapFace.SphereMap;
+            }
+        }
+
+        public bool IsSphereMap {
+            get {
+                return CubeFlags == EnvironmentMapFace.SphereMap;
+            }
+        }
     }
 
     [StructLayoutAttribute(LayoutKind.Sequential)]

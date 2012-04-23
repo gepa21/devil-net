@@ -42,9 +42,9 @@ namespace DevIL {
         }
 
         private void LoadAnimationChain(int imageID) {
-            IL.BindImage((uint) imageID);
+            IL.BindImage(imageID);
 
-            ILImageInfo info = IL.GetImageInfo();
+            ImageInfo info = IL.GetImageInfo();
 
             for(int i = 0; i < info.ImageCount; i++) {
                 ManagedImage image = new ManagedImage(imageID, i);
@@ -54,11 +54,11 @@ namespace DevIL {
         }
 
         private void LoadFaces(int imageID, int imageNum) {
-            IL.BindImage((uint) imageID);
-            if(!IL.ActiveImage((uint) imageNum))
+            IL.BindImage(imageID);
+            if(!IL.ActiveImage(imageNum))
                 return;
 
-            ILImageInfo info = IL.GetImageInfo();
+            ImageInfo info = IL.GetImageInfo();
 
             //Get the first face and every other as a mip map chain, when we hit a null, we break
             for(int i = 0; i <= info.FaceCount; i++) {
@@ -70,13 +70,13 @@ namespace DevIL {
         }
 
         private MipMapChain CreateMipMapChain(int imageID, int imageNum, int faceNum) {
-            IL.BindImage((uint)imageID);
-            if(!IL.ActiveImage((uint) imageNum))
+            IL.BindImage(imageID);
+            if(!IL.ActiveImage(imageNum))
                 return null;
-            if(!IL.ActiveFace((uint) faceNum))
+            if(!IL.ActiveFace(faceNum))
                 return null;
 
-            ILImageInfo info = IL.GetImageInfo();
+            ImageInfo info = IL.GetImageInfo();
             MipMapChain mipMapChain = new MipMapChain();
 
             //Get the first mipmap and every other, when we hit a null, we break

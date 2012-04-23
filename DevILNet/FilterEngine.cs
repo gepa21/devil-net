@@ -8,10 +8,10 @@ namespace DevIL {
 
         public SamplingFilter SamplingFilter {
             get {
-                return ILU.GetImageFilter();
+                return ILU.GetSamplingFilter();
             }
             set {
-                ILU.SetImageFilter(value);
+                ILU.SetSamplingFilter(value);
             }
         }
 
@@ -30,7 +30,7 @@ namespace DevIL {
             }
 
             IL.BindImage(image.ImageID);
-            return ILU.BlurAverage((uint)iterations);
+            return ILU.BlurAverage(iterations);
         }
 
         public bool BlurGaussian(Image image, int iterations) {
@@ -39,7 +39,7 @@ namespace DevIL {
             }
 
             IL.BindImage(image.ImageID);
-            return ILU.BlurGaussian((uint)iterations);
+            return ILU.BlurGaussian(iterations);
         }
 
         public bool BuildMipMaps(Image image) {
@@ -156,7 +156,7 @@ namespace DevIL {
             }
 
             IL.BindImage(image.ImageID);
-            return ILU.Pixelize((uint) pixelSize);
+            return ILU.Pixelize( pixelSize);
         }
 
         public bool Saturate(Image image, float saturation) {
@@ -183,7 +183,7 @@ namespace DevIL {
             }
 
             IL.BindImage(image.ImageID);
-            return ILU.Sharpen(factor, (uint) iterations);
+            return ILU.Sharpen(factor,  iterations);
         }
 
         public bool Wave(Image image, float angle) {

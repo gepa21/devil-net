@@ -66,6 +66,12 @@ namespace DevIL {
             }
         }
 
+        public EnvironmentMapFace CubeFace {
+            get {
+                return m_face;
+            }
+        }
+
         public PaletteType PaletteType {
             get {
                 return m_paletteType;
@@ -102,17 +108,24 @@ namespace DevIL {
             if(imageID < 0)
                 return null;
 
-            IL.BindImage((uint)imageID);
-            if(!IL.ActiveImage((uint) imageNum))
+            IL.BindImage(imageID);
+
+            if(!IL.ActiveImage(imageNum))
                 return null;
-            if(!IL.ActiveFace((uint) faceNum))
+
+            if(!IL.ActiveFace(faceNum))
                 return null;
-            //IL.ActiveLayer((uint) layerNum); Not yet implemented
-            if(!IL.ActiveMipMap((uint) mipMapNum))
+
+            /* Layers not supported for the moment
+            if(!IL.ActiveLayer((uint) layerNum))
+                return null;
+            */
+
+            if(!IL.ActiveMipMap(mipMapNum))
                 return null;
             
             ImageData imageData = new ImageData();
-            ILImageInfo info = IL.GetImageInfo();
+            ImageInfo info = IL.GetImageInfo();
             imageData.m_width = info.Width;
             imageData.m_height = info.Height;
             imageData.m_depth = info.Depth;
@@ -122,20 +135,19 @@ namespace DevIL {
             imageData.m_dataType = info.DataType;
             imageData.m_origin = info.Origin;
             imageData.m_paletteType = info.PaletteType;
-            IntPtr data = IL.GetData();
 
-            if(data != IntPtr.Zero) {
-                imageData.m_data = MemoryHelper.MarshalArray<byte>(data, info.SizeOfData);
-            } else {
-                return null; //If no data, then we hit an invalid for some reason, abort
-            }
+            imageData.m_data = IL.GetImageData();
 
-            if(imageData.HasCompressedData) {
+            //If no uncompressed data, we're here by accident, abort
+            if(imageData.m_data == null)
+                return null;
+
+            if(imageData.m_compressedFormat != CompressedDataFormat.None) {
                 imageData.m_compressedData = IL.GetDxtcData(imageData.m_compressedFormat);
             }
 
             if(imageData.HasPaletteData) {
-
+                imageData.m_paletteData = IL.GetPaletteData();
             }
 
             return imageData;

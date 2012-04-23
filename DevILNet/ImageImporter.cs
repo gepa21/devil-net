@@ -41,7 +41,7 @@ namespace DevIL {
             lock(m_sync) {
                 CheckDisposed();
 
-                uint id = GenImage();
+                int id = GenImage();
 
                 if(IL.LoadImage(filename)) {
                     return new Image(id);
@@ -67,9 +67,9 @@ namespace DevIL {
             lock(m_sync) {
                 CheckDisposed();
 
-                uint id = GenImage();
+                int id = GenImage();
 
-                if(IL.LoadFromStream(stream)) {
+                if(IL.LoadImageFromStream(stream)) {
                     return new Image(id);
                 } else {
                     throw new IOException(String.Format("Failed to loade image: {0}", IL.GetError()));
@@ -93,9 +93,9 @@ namespace DevIL {
             lock(m_sync) {
                 CheckDisposed();
 
-                uint id = GenImage();
+                int id = GenImage();
 
-                if(IL.LoadFromStream(imageType, stream)) {
+                if(IL.LoadImageFromStream(imageType, stream)) {
                     return new Image(id);
                 } else {
                     throw new IOException(String.Format("Failed to loade image: {0}", IL.GetError()));
@@ -121,8 +121,8 @@ namespace DevIL {
             }
         }
 
-        private uint GenImage() {
-            uint id = IL.GenImage();
+        private int GenImage() {
+            int id = IL.GenerateImage();
             IL.BindImage(id);
             return id;
         }
@@ -144,8 +144,8 @@ namespace DevIL {
         private static void AddRef() {
             lock(s_sync) {
                 if(s_ref == 0) {
-                    IL.Init();
-                    ILU.Init();
+                    IL.Initialize();
+                    ILU.Initialize();
                 }
                 s_ref++;
             }
@@ -156,7 +156,7 @@ namespace DevIL {
                 s_ref--;
 
                 if(s_ref == 0) {
-                    IL.ShutDown();
+                    IL.Shutdown();
                 }
             }
         }

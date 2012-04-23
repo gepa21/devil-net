@@ -6,11 +6,11 @@ using System.Text;
 namespace DevIL {
     public sealed class Image : IDisposable, IEquatable<Image> {
         private bool m_isDisposed = false;
-        private uint m_id;
+        private int m_id;
 
         private static Image s_default = new Image(0);
 
-        internal uint ImageID {
+        internal int ImageID {
             get {
                 return m_id;
             }
@@ -28,7 +28,7 @@ namespace DevIL {
             }
         }
 
-        internal Image(uint id) {
+        internal Image(int id) {
             m_id = id;
         }
 
@@ -48,7 +48,7 @@ namespace DevIL {
         }
 
         public Image Clone() {
-            uint newID = IL.GenImage();
+            int newID = IL.GenerateImage();
             Image clone = new Image(newID);
             IL.BindImage(newID);
             IL.CopyImage(m_id);

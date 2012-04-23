@@ -261,7 +261,7 @@ namespace DevIL {
                 return;
             }
 
-            IL.SetCompression(m_compression);
+            IL.SetCompressionAlgorithm(m_compression);
             IL.SetDxtcFormat(m_dxtcFormat);
             IL.SetInteger(ILIntegerMode.VTFCompression, (int)m_vtfCompression);
             IL.SetBoolean(ILBooleanMode.KeepDxtcData, m_keepDxtcData);

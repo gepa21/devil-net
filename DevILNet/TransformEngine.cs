@@ -21,7 +21,7 @@ namespace DevIL {
             }
 
             IL.BindImage(image.ImageID);
-            return ILU.Crop((uint)offsetX, (uint)offsetY, (uint)offsetZ, (uint)width, (uint)height, (uint)depth);
+            return ILU.Crop(offsetX, offsetY, offsetZ, width, height, depth);
         }
 
         public bool EnlargeCanvas(Image image, int width, int height, int depth) {
@@ -30,7 +30,7 @@ namespace DevIL {
             }
 
             IL.BindImage(image.ImageID);
-            return ILU.EnlargeCanvas((uint) width, (uint) height, (uint) depth);
+            return ILU.EnlargeCanvas( width,  height,  depth);
         }
 
         public bool EnlargeImage(Image image, int xDim, int yDim, int zDim) {
@@ -39,7 +39,7 @@ namespace DevIL {
             }
 
             IL.BindImage(image.ImageID);
-            return ILU.EnlargeImage((uint) xDim, (uint) yDim, (uint) zDim);
+            return ILU.EnlargeImage( xDim,  yDim,  zDim);
         }
 
         public bool Scale(Image image, int width, int height, int depth) {

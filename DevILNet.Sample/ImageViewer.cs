@@ -99,14 +99,14 @@ namespace DevILNet.Sample {
                 pictureBox.Image = null;
             } else {
                 m_activeImage.Bind();
-                ILImageInfo info = IL.GetImageInfo();
+                ImageInfo info = IL.GetImageInfo();
                 SD.Bitmap bitmap = new SD.Bitmap(info.Width, info.Height, SDI.PixelFormat.Format32bppArgb);
                 SD.Rectangle rect = new SD.Rectangle(0, 0, info.Width, info.Height);
                 SDI.BitmapData data = bitmap.LockBits(rect, SDI.ImageLockMode.WriteOnly, SDI.PixelFormat.Format32bppArgb);
 
                 //Since Scan0 is an IntPtr to the bitmap data and we're all the same size...just do a copy.
-                uint what = IL.CopyPixels(0, 0, 0, (uint)info.Width, (uint)info.Height, 1, DataFormat.BGRA, DataType.UnsignedByte, data.Scan0);
-                ErrorType err = IL.GetError();
+                IL.CopyPixels(0, 0, 0, info.Width, info.Height, 1, DataFormat.BGRA, DataType.UnsignedByte, data.Scan0);
+
                 bitmap.UnlockBits(data);
 
                 pictureBox.Image = (SD.Image) bitmap;
