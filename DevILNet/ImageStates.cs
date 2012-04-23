@@ -9,7 +9,7 @@ namespace DevIL {
         void Apply();
     }
 
-    public class ImageState : IImageState {
+    public sealed class ImageState : IImageState {
         private bool m_useAbsoluteFormat = false;
         private bool m_useAbsoluteDataType = false;
         private bool m_useAbsoluteOrigin = false;
@@ -116,7 +116,7 @@ namespace DevIL {
             }
         }
 
-        public virtual void Apply() {
+        public void Apply() {
             if(!IL.IsInitialized) {
                 return;
             }
@@ -171,7 +171,60 @@ namespace DevIL {
         }
     }
 
-    public class QuantizationState : IImageState {
+    public sealed class LanguageState : IImageState {
+        private Language m_language = Language.English;
+
+        public Language Language {
+            get {
+                return m_language;
+            }
+            set {
+                m_language = value;
+            }
+        }
+
+        public void Apply() {
+            if(!ILU.IsInitialized) {
+                return;
+            }
+
+            ILU.SetLanguage(m_language);
+        }
+    }
+
+    public sealed class HintState : IImageState {
+        private CompressionHint m_compressHint = CompressionHint.UseCompression;
+        private MemoryHint m_memHint = MemoryHint.Fastest;
+
+        public CompressionHint CompressionHint {
+            get {
+                return m_compressHint;
+            }
+            set {
+                m_compressHint = value;
+            }
+        }
+
+        public MemoryHint MemoryHint {
+            get {
+                return m_memHint;
+            }
+            set {
+                m_memHint = value;
+            }
+        }
+
+        public void Apply() {
+            if(!IL.IsInitialized) {
+                return;
+            }
+
+            IL.SetCompressionHint(m_compressHint);
+            IL.SetMemoryHint(m_memHint);
+        }
+    }
+
+    public sealed class QuantizationState : IImageState {
         private Quantization m_quantMode = Quantization.Wu;
         private int m_maxQuantIndices = 256;
         private int m_neuQuantSample = 15;
@@ -203,7 +256,7 @@ namespace DevIL {
             }
         }
 
-        public virtual void Apply() {
+        public void Apply() {
             if(!IL.IsInitialized) {
                 return;
             }
@@ -214,7 +267,7 @@ namespace DevIL {
         }
     }
 
-    public class CompressionState : IImageState {
+    public sealed class CompressionState : IImageState {
         private CompressionAlgorithm m_compression = CompressionAlgorithm.ZLib;
         private CompressedDataFormat m_dxtcFormat = CompressedDataFormat.DXT1;
         private CompressedDataFormat m_vtfCompression = CompressedDataFormat.None;
@@ -256,7 +309,7 @@ namespace DevIL {
             }
         }
 
-        public virtual void Apply() {
+        public void Apply() {
             if(!IL.IsInitialized) {
                 return;
             }
@@ -334,7 +387,7 @@ namespace DevIL {
         }
     }
 
-    public class JpgSaveState : SaveState {
+    public sealed class JpgSaveState : SaveState {
         private int m_jpgQuality = 99;
         private JpgSaveFormat m_jpgSaveFormat = JpgSaveFormat.Jfif;
         private bool m_jpgProgressive = false;
@@ -382,7 +435,7 @@ namespace DevIL {
         }
     }
 
-    public class TgaSaveState : SaveState {
+    public sealed class TgaSaveState : SaveState {
         private String m_tgaId = String.Empty;
         private String m_tgaAuthName = String.Empty;
         private String m_tgaAuthComment = String.Empty;
@@ -439,7 +492,7 @@ namespace DevIL {
         }
     }
 
-    public class TiffSaveState : SaveState {
+    public sealed class TiffSaveState : SaveState {
         private String m_tifAuthName = String.Empty;
         private String m_tifDescription = String.Empty;
         private String m_tifDocumentName = String.Empty;
@@ -494,7 +547,7 @@ namespace DevIL {
         }
     }
 
-    public class PngSaveState : SaveState {
+    public sealed class PngSaveState : SaveState {
         private int m_pngAlphaIndex = -1;
         private String m_pngAuthName = String.Empty;
         private String m_pngTitle = String.Empty;
@@ -560,7 +613,7 @@ namespace DevIL {
         }
     }
 
-    public class BmpSaveState : SaveState {
+    public sealed class BmpSaveState : SaveState {
         private bool m_useBmpRle = false;
         private int m_pcdPicNumber = 2;
 
@@ -593,7 +646,7 @@ namespace DevIL {
         }
     }
 
-    public class SgiSaveState : SaveState {
+    public sealed class SgiSaveState : SaveState {
         private bool m_useSgiRle = false;
 
         public bool UseSgiRle {
