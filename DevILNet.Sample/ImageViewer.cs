@@ -58,6 +58,10 @@ namespace DevILNet.Sample {
             state.AbsoluteOrigin = OriginLocation.UpperLeft;
             state.Apply();
 
+            CompressionState comp = new CompressionState();
+            comp.KeepDxtcData = true;
+            comp.Apply();
+
             SaveState sstate = new SaveState();
             sstate.OverwriteExistingFile = true;
             sstate.Apply();

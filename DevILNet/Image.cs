@@ -60,11 +60,28 @@ namespace DevIL {
             IL.BindImage(m_id);
         }
 
-        public ManagedImage LoadManaged() {
-            if(IsValid) {
-                return new ManagedImage(this);
-            }
-            return null;
+        public bool ConvertToDxtc(CompressedDataFormat compressedFormat) {
+            if(!CheckValid(this))
+                return false;
+
+            Bind();
+            return IL.ImageToDxtcData(compressedFormat);
+        }
+
+        public bool CopyFrom(Image srcImage) {
+            if(!CheckValid(this) || !CheckValid(srcImage))
+                return false;
+
+            Bind();
+            return IL.CopyImage(srcImage.ImageID);
+        }
+
+        public bool CopyTo(Image destImage) {
+            if(!CheckValid(this) || !CheckValid(destImage))
+                return false;
+
+            destImage.Bind();
+            return IL.CopyImage(this.ImageID);
         }
 
         public Image Clone() {
@@ -76,7 +93,17 @@ namespace DevIL {
         }
 
         public ManagedImage ToManaged() {
-            return new ManagedImage(this);
+            if(IsValid) {
+                return new ManagedImage(this);
+            }
+            return null;
+        }
+
+        public static bool CheckValid(Image image) {
+            if(image != null && image.IsValid)
+                return true;
+
+            return false;
         }
 
         public bool Equals(Image other) {

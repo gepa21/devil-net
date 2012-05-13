@@ -313,6 +313,9 @@ namespace DevIL.Unmanaged {
             return ilEnable((uint) mode);
         }
 
+        /// <summary>
+        /// Flips the currently bound surface (image, mipmap, etc)'s dxtc data.
+        /// </summary>
         [DllImportAttribute(ILDLL, EntryPoint = "ilFlipSurfaceDxtcData", CallingConvention = CallingConvention.StdCall)]
         public static extern void FlipSurfaceDxtcData();
 
@@ -543,6 +546,13 @@ namespace DevIL.Unmanaged {
             return ilIsEnabled((uint) mode);
         }
 
+        /// <summary>
+        /// Converts the currently bound image data to the specified compressed format. The conversion
+        /// occurs for each surface in the image (next image, and each image's mip map chain). This is identical to looping over
+        /// these surfaces and calling SurfaceToDxtcData(CompressedDataFormat).
+        /// </summary>
+        /// <param name="format">Compressed format to convert image data to</param>
+        /// <returns>True if the operation was successful</returns>
         public static bool ImageToDxtcData(CompressedDataFormat format) {
             return ilImageToDxtcData((uint) format);
         }
@@ -847,6 +857,11 @@ namespace DevIL.Unmanaged {
             }
         }
 
+        /// <summary>
+        /// Converts the currently bound surface (image, mipmap, etc) to the specified compressed format.
+        /// </summary>
+        /// <param name="format">Comrpessed format</param>
+        /// <returns>True if the operation was successful or not.</returns>
         public static bool SurfaceToDxtcData(CompressedDataFormat format) {
             return ilSurfaceToDxtcData((uint) format);
         }
