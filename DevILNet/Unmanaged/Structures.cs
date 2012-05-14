@@ -24,6 +24,110 @@ using System;
 using System.Runtime.InteropServices;
 
 namespace DevIL.Unmanaged {
+    /// <summary>
+    /// Represents a specific image surface - e.g. a mipmap, another image in the image array, a face in a cubemap, etc. All surface
+    /// numbers set to zero with a valid ImageID represents the root image.
+    /// </summary>
+    public struct Subimage {
+        private ImageID m_rootImage;
+        private int m_imageIndex;
+        private int m_faceIndex;
+        private int m_layerIndex;
+        private int m_mipMapIndex;
+
+        public ImageID RootImage {
+            get {
+                return m_rootImage;
+            }
+        }
+
+        public int ImageIndex {
+            get {
+                return m_imageIndex;
+            }
+        }
+
+        public int FaceIndex {
+            get {
+                return m_faceIndex;
+            }
+        }
+
+        public int LayerIndex {
+            get {
+                return m_layerIndex;
+            }
+        }
+
+        public int MipMapIndex {
+            get {
+                return m_mipMapIndex;
+            }
+        }
+
+        public Subimage(ImageID rootImage) {
+            m_rootImage = rootImage;
+            m_imageIndex = 0;
+            m_faceIndex = 0;
+            m_layerIndex = 0;
+            m_mipMapIndex = 0;
+        }
+
+        public Subimage(ImageID rootImage, int imageIndex) {
+            m_rootImage = rootImage;
+            m_imageIndex = imageIndex;
+            m_faceIndex = 0;
+            m_layerIndex = 0;
+            m_mipMapIndex = 0;
+        }
+
+        public Subimage(ImageID rootImage, int imageIndex, int faceIndex) {
+            m_rootImage = rootImage;
+            m_imageIndex = imageIndex;
+            m_faceIndex = faceIndex;
+            m_layerIndex = 0;
+            m_mipMapIndex = 0;
+        }
+
+        public Subimage(ImageID rootImage, int imageIndex, int faceIndex, int layerIndex) {
+            m_rootImage = rootImage;
+            m_imageIndex = imageIndex;
+            m_faceIndex = faceIndex;
+            m_layerIndex = layerIndex;
+            m_mipMapIndex = 0;
+        }
+
+        public Subimage(ImageID rootImage, int imageIndex, int faceIndex, int layerIndex, int mipMapIndex) {
+            m_rootImage = rootImage;
+            m_imageIndex = imageIndex;
+            m_faceIndex = faceIndex;
+            m_layerIndex = layerIndex;
+            m_mipMapIndex = mipMapIndex;
+        }
+
+        public bool Activate() {
+            if(m_rootImage <= 0)
+                return false;
+
+            IL.BindImage(m_rootImage);
+
+            //Don't bother to activate if any subimages are zero, as it corresponds to the root image
+
+            if(m_imageIndex > 0 && !IL.ActiveImage(m_imageIndex))
+                return false;
+
+            if(m_faceIndex > 0 && !IL.ActiveFace(m_faceIndex))
+                return false;
+
+            if(m_layerIndex > 0 && !IL.ActiveLayer(m_layerIndex))
+                return false;
+
+            if(m_mipMapIndex > 0 && !IL.ActiveMipMap(m_mipMapIndex))
+                return false;
+
+            return true;
+        }
+    }
 
     [StructLayout(LayoutKind.Sequential)]
     public struct ImageID : IEquatable<ImageID> {
@@ -38,7 +142,7 @@ namespace DevIL.Unmanaged {
         public ImageID(int id) {
             m_id = id;
         }
-   
+
         public static implicit operator ImageID(int id) {
             return new ImageID(id);
         }
@@ -62,8 +166,6 @@ namespace DevIL.Unmanaged {
         public static bool operator !=(ImageID a, ImageID b) {
             return (a.m_id != b.m_id);
         }
-
-        
 
         public bool Equals(ImageID other) {
             return m_id == other.m_id;

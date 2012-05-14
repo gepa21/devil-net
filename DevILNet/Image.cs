@@ -24,6 +24,12 @@ using System;
 using DevIL.Unmanaged;
 
 namespace DevIL {
+
+    /// <summary>
+    /// Represents a "root" image that is currently valid in DevIL. The root image may be the first image in an image array (e.g. animation), 
+    /// and each image may contain a number of subimages - mipmaps or faces if the image is a cubemap (positiveX, positiveY, etc). Each surface can
+    /// be loaded individually, or the entire image chain can be loaded into a ManagedImage.
+    /// </summary>
     public sealed class Image : IDisposable, IEquatable<Image> {
         private bool m_isDisposed = false;
         private ImageID m_id;
@@ -47,6 +53,224 @@ namespace DevIL {
                 return s_default;
             }
         }
+
+        #region ImageInfo Properties
+
+        public DataFormat Format {
+            get {
+                if(!IsValid)
+                    return DataFormat.RGBA;
+
+                Bind();
+                return (DataFormat) IL.ilGetInteger(ILDefines.IL_IMAGE_FORMAT);
+            }
+        }
+
+        public CompressedDataFormat DxtcFormat {
+            get {
+                if(!IsValid)
+                    return CompressedDataFormat.None;
+
+                Bind();
+                return (CompressedDataFormat) IL.ilGetInteger(ILDefines.IL_DXTC_DATA_FORMAT);
+            }
+        }
+
+        public DataType DataType {
+            get {
+                if(!IsValid)
+                    return DevIL.DataType.UnsignedByte;
+
+                Bind();
+                return (DevIL.DataType) IL.ilGetInteger(ILDefines.IL_IMAGE_TYPE);
+            }
+        }
+
+        public PaletteType PaletteType {
+            get {
+                if(!IsValid)
+                    return DevIL.PaletteType.None;
+
+                Bind();
+                return (DevIL.PaletteType) IL.ilGetInteger(ILDefines.IL_PALETTE_TYPE);
+            }
+        }
+
+        public DataFormat PaletteBaseType {
+            get {
+                if(!IsValid)
+                    return DataFormat.RGBA;
+
+                Bind();
+                return (DataFormat) IL.ilGetInteger(ILDefines.IL_PALETTE_BASE_TYPE);
+            }
+        }
+
+        public OriginLocation Origin {
+            get {
+                if(!IsValid)
+                    return OriginLocation.UpperLeft;
+
+                Bind();
+                return (OriginLocation) IL.ilGetInteger(ILDefines.IL_IMAGE_ORIGIN);
+            }
+        }
+
+        public int Width {
+            get {
+                if(!IsValid)
+                    return 0;
+
+                Bind();
+                return IL.GetInteger(ILIntegerMode.ImageWidth);
+            }
+        }
+
+        public int Height {
+            get {
+                if(!IsValid)
+                    return 0;
+
+                Bind();
+                return IL.GetInteger(ILIntegerMode.ImageHeight);
+            }
+        }
+
+        public int Depth {
+            get {
+                if(!IsValid)
+                    return 0;
+
+                Bind();
+                return IL.GetInteger(ILIntegerMode.ImageDepth);
+            }
+        }
+
+        public int BytesPerPixel {
+            get {
+                if(!IsValid)
+                    return 0;
+
+                Bind();
+                return IL.GetInteger(ILIntegerMode.ImageBytesPerPixel);
+            }
+        }
+
+        public int BitsPerPixel {
+            get {
+                if(!IsValid)
+                    return 0;
+
+                Bind();
+                return IL.GetInteger(ILIntegerMode.ImageBitsPerPixel);
+            }
+        }
+
+        public int ChannelCount {
+            get {
+                if(!IsValid)
+                    return 0;
+
+                Bind();
+                return IL.GetInteger(ILIntegerMode.ImageChannels);
+            }
+        }
+
+        public int PaletteBytesPerPixel {
+            get {
+                if(!IsValid)
+                    return 0;
+
+                Bind();
+                return IL.GetInteger(ILIntegerMode.ImagePaletteBytesPerPixel);
+            }
+        }
+
+        public int PaletteColumnCount {
+            get {
+                if(!IsValid)
+                    return 0;
+
+                Bind();
+                return IL.GetInteger(ILIntegerMode.ImagePaletteColumnCount);
+            }
+        }
+
+        public int FaceCount {
+            get {
+                if(!IsValid)
+                    return 0;
+
+                Bind();
+                return IL.GetInteger(ILIntegerMode.ImageFaceCount) + 1;
+            }
+        }
+
+        public int ImageArrayCount {
+            get {
+                if(!IsValid)
+                    return 0;
+
+                Bind();
+                return IL.GetInteger(ILIntegerMode.ImageArrayCount) + 1;
+            }
+        }
+
+        public int MipMapCount {
+            get {
+                if(!IsValid)
+                    return 0;
+
+                Bind();
+                return IL.GetInteger(ILIntegerMode.ImageMipMapCount) + 1;
+            }
+        }
+
+        public int LayerCount {
+            get {
+                if(!IsValid)
+                    return 0;
+
+                Bind();
+                return IL.GetInteger(ILIntegerMode.ImageLayerCount) + 1;
+            }
+        }
+
+        public bool HasDXTCData {
+            get {
+                if(!IsValid)
+                    return false;
+                return this.DxtcFormat != CompressedDataFormat.None;
+            }
+        }
+
+        public bool HasPaletteData {
+            get {
+                if(!IsValid)
+                    return false;
+                return this.PaletteType != DevIL.PaletteType.None;
+            }
+        }
+
+        public bool IsCubeMap {
+            get {
+                if(!IsValid)
+                    return false;
+                CubeMapFace face = (CubeMapFace) IL.ilGetInteger(ILDefines.IL_IMAGE_CUBEFLAGS);
+                return (face != CubeMapFace.None) && (face != CubeMapFace.SphereMap);
+            }
+        }
+
+        public bool IsSphereMap {
+            get {
+                if(!IsValid)
+                    return false;
+                CubeMapFace face = (CubeMapFace) IL.ilGetInteger(ILDefines.IL_IMAGE_CUBEFLAGS);
+                return face == CubeMapFace.SphereMap;
+            }
+        }
+
+        #endregion
 
         internal Image(ImageID id) {
             m_id = id;
@@ -90,6 +314,49 @@ namespace DevIL {
             IL.BindImage(newID);
             IL.CopyImage(m_id);
             return clone;
+        }
+
+        public ImageInfo GetImageInfo() {
+            ImageInfo info = new ImageInfo();
+            if(CheckValid(this)) {
+                Bind();
+                info = IL.GetImageInfo();
+            }
+            return info;
+        }
+
+        public ImageData GetImageData(int imageIndex, int faceIndex, int layerIndex, int mipmapIndex) {
+            if(!IsValid || imageIndex < 0 || faceIndex < 0 || layerIndex < 0 || mipmapIndex < 0)
+                return null;
+
+            Subimage subimage = new Subimage(m_id, imageIndex, faceIndex, layerIndex, mipmapIndex);
+            return ImageData.Load(subimage);
+        }
+
+        public ImageData GetImageData(CubeMapFace cubeMapFace, int mipmapIndex) {
+            if(!IsValid || mipmapIndex < 0)
+                return null;
+
+            int faceCount = FaceCount;
+            for(int i = 0; i < faceCount; i++) {
+                Bind();
+                IL.ActiveFace(i);
+                CubeMapFace face = (CubeMapFace) IL.ilGetInteger(ILDefines.IL_IMAGE_CUBEFLAGS);
+
+                if(face == cubeMapFace) {
+                    return ImageData.Load(new Subimage(m_id, 0, i, 0, mipmapIndex));
+                }
+            }
+
+            return null;
+        }
+
+        public ImageData GetImageData(int mipmapIndex) {
+            if(!IsValid || mipmapIndex < 0)
+                return null;
+
+            Subimage subimage = new Subimage(m_id, 0, 0, 0, mipmapIndex);
+            return ImageData.Load(subimage);
         }
 
         public ManagedImage ToManaged() {

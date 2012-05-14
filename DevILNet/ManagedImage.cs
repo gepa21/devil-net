@@ -63,12 +63,18 @@ namespace DevIL {
         private void LoadAnimationChain(ImageID imageID) {
             IL.BindImage(imageID);
 
-            ImageInfo info = IL.GetImageInfo();
+            //Get total number of images in array (including first)
+            int imageCount = IL.ilGetInteger(ILDefines.IL_NUM_IMAGES) + 1;
 
-            for(int i = 0; i < info.ImageCount; i++) {
-                ManagedImage image = new ManagedImage(imageID, i);
-                if(image.Faces.Count != 0)
-                    m_animChain.Add(image);
+            //If just one image, we aren't really an animation chain
+            if(imageCount > 1) {
+                m_animChain.Add(this);
+                for(int i = 1; i < imageCount; i++) {
+                    ManagedImage image = new ManagedImage(imageID, i);
+                    //If the image wasn't valid, don't add it
+                    if(image.Faces.Count != 0)
+                        m_animChain.Add(image);
+                }
             }
         }
 
@@ -77,10 +83,11 @@ namespace DevIL {
             if(!IL.ActiveImage(imageNum))
                 return;
 
-            ImageInfo info = IL.GetImageInfo();
+            //Get total number of faces (including base face)
+            int faceCount = IL.ilGetInteger(ILDefines.IL_NUM_FACES) + 1;
 
             //Get the first face and every other as a mip map chain, when we hit a null, we break
-            for(int i = 0; i <= info.FaceCount; i++) {
+            for(int i = 0; i < faceCount; i++) {
                 MipMapChain mipMapChain = CreateMipMapChain(imageID, imageNum, i);
                 if(mipMapChain == null)
                     break;
@@ -95,12 +102,13 @@ namespace DevIL {
             if(!IL.ActiveFace(faceNum))
                 return null;
 
-            ImageInfo info = IL.GetImageInfo();
+            //Get total number of mipmaps (including base face)
+            int mipMapCount = IL.ilGetInteger(ILDefines.IL_NUM_MIPMAPS) + 1;
             MipMapChain mipMapChain = new MipMapChain();
 
             //Get the first mipmap and every other, when we hit a null, we break
-            for(int i = 0; i <= info.MipMapCount; i++) {
-                ImageData data = ImageData.Load(imageID, imageNum, faceNum, 0, i);
+            for(int i = 0; i < mipMapCount; i++) {
+                ImageData data = ImageData.Load(new Subimage(imageID, imageNum, faceNum, 0, i));
                 if(data == null)
                     break;
                 mipMapChain.Add(data);

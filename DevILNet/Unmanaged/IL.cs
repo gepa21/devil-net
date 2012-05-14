@@ -496,10 +496,10 @@ namespace DevIL.Unmanaged {
             info.OffsetX = ilGetInteger(ILDefines.IL_IMAGE_OFFX);
             info.OffsetY = ilGetInteger(ILDefines.IL_IMAGE_OFFY);
             info.PlaneSize = ilGetInteger(ILDefines.IL_IMAGE_PLANESIZE);
-            info.FaceCount = ilGetInteger(ILDefines.IL_NUM_FACES);
-            info.ImageCount = ilGetInteger(ILDefines.IL_NUM_IMAGES);
-            info.LayerCount = ilGetInteger(ILDefines.IL_NUM_LAYERS);
-            info.MipMapCount = ilGetInteger(ILDefines.IL_NUM_MIPMAPS);
+            info.FaceCount = ilGetInteger(ILDefines.IL_NUM_FACES) + 1;
+            info.ImageCount = ilGetInteger(ILDefines.IL_NUM_IMAGES) + 1;
+            info.LayerCount = ilGetInteger(ILDefines.IL_NUM_LAYERS) + 1;
+            info.MipMapCount = ilGetInteger(ILDefines.IL_NUM_MIPMAPS) + 1;
             info.PaletteBytesPerPixel = ilGetInteger(ILDefines.IL_PALETTE_BPP);
             info.PaletteColumnCount = ilGetInteger(ILDefines.IL_PALETTE_NUM_COLS);
             return info;
@@ -1086,7 +1086,7 @@ namespace DevIL.Unmanaged {
         private static extern uint ilGetError();
 
         [DllImportAttribute(ILDLL, EntryPoint = "ilGetInteger", CallingConvention = CallingConvention.StdCall)]
-        private static extern int ilGetInteger(uint Mode);
+        internal static extern int ilGetInteger(uint Mode);
 
         /// Return Type: ILubyte*, need to find size via current image's pal size
         [DllImportAttribute(ILDLL, EntryPoint = "ilGetPalette", CallingConvention = CallingConvention.StdCall)]

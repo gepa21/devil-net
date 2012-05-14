@@ -24,82 +24,152 @@ using DevIL.Unmanaged;
 
 namespace DevIL {
     public class ImageData {
-        private int m_width;
-        private int m_height;
-        private int m_depth;
-        private DataFormat m_format;
-        private CompressedDataFormat m_compressedFormat;
-        private CubeMapFace m_face;
-        private DataType m_dataType;
-        private OriginLocation m_origin;
-        private PaletteType m_paletteType;
+        private ImageInfo m_info;
         private byte[] m_data;
         private byte[] m_compressedData;
         private byte[] m_paletteData;
 
-        public int Width {
-            get {
-                return m_width;
-            }
-        }
-
-        public int Height {
-            get {
-                return m_height;
-            }
-        }
-
-        public int Depth {
-            get {
-                return m_depth;
-            }
-        }
-
         public DataFormat Format {
             get {
-                return m_format;
+                return m_info.Format;
             }
         }
 
-        public CompressedDataFormat CompressedFormat {
+        public CompressedDataFormat DxtcFormat {
             get {
-                return m_compressedFormat;
+                return m_info.DxtcFormat;
             }
         }
 
         public DataType DataType {
             get {
-                return m_dataType;
-            }
-        }
-
-        public bool HasCompressedData {
-            get {
-                return m_compressedFormat != CompressedDataFormat.None && m_compressedData != null;
-            }
-        }
-
-        public OriginLocation Origin {
-            get {
-                return m_origin;
-            }
-        }
-
-        public CubeMapFace CubeFace {
-            get {
-                return m_face;
+                return m_info.DataType;
             }
         }
 
         public PaletteType PaletteType {
             get {
-                return m_paletteType;
+                return m_info.PaletteType;
+            }
+        }
+
+        public DataFormat PaletteBaseType {
+            get {
+                return m_info.PaletteBaseType;
+            }
+        }
+
+        public CubeMapFace CubeFace {
+            get {
+                return m_info.CubeFlags;
+            }
+        }
+
+        public OriginLocation Origin {
+            get {
+                return m_info.Origin;
+            }
+        }
+
+        public int Width {
+            get {
+                return m_info.Width;
+            }
+        }
+
+        public int Height {
+            get {
+                return m_info.Height;
+            }
+        }
+
+        public int Depth {
+            get {
+                return m_info.Depth;
+            }
+        }
+
+        public int BitsPerPixel {
+            get {
+                return m_info.BitsPerPixel;
+            }
+        }
+
+        public int BytesPerPixel {
+            get {
+                return m_info.BytesPerPixel;
+            }
+        }
+
+        public int ChannelCount {
+            get {
+                return m_info.Channels;
+            }
+        }
+
+        public int Duration {
+            get {
+                return m_info.Duration;
+            }
+        }
+
+        public int SizeOfData {
+            get {
+                return m_info.SizeOfData;
+            }
+        }
+
+        public int OffsetX {
+            get {
+                return m_info.OffsetX;
+            }
+        }
+
+        public int OffsetY {
+            get {
+                return m_info.OffsetY;
+            }
+        }
+
+        public int PlaneSize {
+            get {
+                return m_info.PlaneSize;
+            }
+        }
+
+        public int PaletteBytesPerPixel {
+            get {
+                return m_info.PaletteBytesPerPixel;
+            }
+        }
+
+        public int PaletteColumnCount {
+            get {
+                return m_info.PaletteColumnCount;
+            }
+        }
+
+        public bool HasDXTCData {
+            get {
+                return m_info.HasDXTC && m_compressedData != null;
             }
         }
 
         public bool HasPaletteData {
             get {
-                return m_paletteType != DevIL.PaletteType.None && m_paletteData != null;
+                return m_info.HasPalette && m_paletteData != null;
+            }
+        }
+
+        public bool IsCubeMap {
+            get {
+                return m_info.IsCubeMap;
+            }
+        }
+
+        public bool IsSphereMap {
+            get {
+                return m_info.IsSphereMap;
             }
         }
 
@@ -123,49 +193,23 @@ namespace DevIL {
 
         private ImageData() { }
 
-        internal static ImageData Load(ImageID imageID, int imageNum, int faceNum, int layerNum, int mipMapNum) {
-            if(imageID < 0)
+        internal static ImageData Load(Subimage subimage) {
+            if(!subimage.Activate())
                 return null;
 
-            IL.BindImage(imageID);
-
-            if(!IL.ActiveImage(imageNum))
-                return null;
-
-            if(!IL.ActiveFace(faceNum))
-                return null;
-
-            /* Layers not supported for the moment
-            if(!IL.ActiveLayer((uint) layerNum))
-                return null;
-            */
-
-            if(!IL.ActiveMipMap(mipMapNum))
-                return null;
-            
             ImageData imageData = new ImageData();
-            ImageInfo info = IL.GetImageInfo();
-            imageData.m_width = info.Width;
-            imageData.m_height = info.Height;
-            imageData.m_depth = info.Depth;
-            imageData.m_format = info.Format;
-            imageData.m_compressedFormat = info.DxtcFormat;
-            imageData.m_face = info.CubeFlags;
-            imageData.m_dataType = info.DataType;
-            imageData.m_origin = info.Origin;
-            imageData.m_paletteType = info.PaletteType;
-
+            imageData.m_info = IL.GetImageInfo();
             imageData.m_data = IL.GetImageData();
 
             //If no uncompressed data, we're here by accident, abort
             if(imageData.m_data == null)
                 return null;
 
-            if(imageData.m_compressedFormat != CompressedDataFormat.None) {
-                imageData.m_compressedData = IL.GetDxtcData(imageData.m_compressedFormat);
+            if(imageData.m_info.HasDXTC) {
+                imageData.m_compressedData = IL.GetDxtcData(imageData.DxtcFormat);
             }
 
-            if(imageData.HasPaletteData) {
+            if(imageData.m_info.HasPalette) {
                 imageData.m_paletteData = IL.GetPaletteData();
             }
 
