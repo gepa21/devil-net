@@ -37,6 +37,7 @@ namespace DevIL {
         private DataFormat m_absoluteFormat = DataFormat.BGRA;
         private DataType m_absoluteDataType = DataType.UnsignedByte;
         private OriginLocation m_absoluteOrigin = OriginLocation.LowerLeft;
+        private Color m_keyColor = new Color(1, 0, 1, 1); 
 
         private bool m_convertPalette = false;
         private bool m_defaultImageOnFail = false;
@@ -127,6 +128,16 @@ namespace DevIL {
             }
         }
 
+        public Color ColorKey {
+            get {
+                return m_keyColor;
+            }
+            set {
+                m_keyColor = value;
+                m_useColorKey = true;
+            }
+        }
+
         public bool BlitBlend {
             get {
                 return m_blitBlend;
@@ -179,6 +190,7 @@ namespace DevIL {
 
             if(m_useColorKey) {
                 IL.Enable(ILEnable.UseColorKey);
+                IL.SetKeyColor(m_keyColor);
             } else {
                 IL.Disable(ILEnable.UseColorKey);
             }

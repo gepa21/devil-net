@@ -796,6 +796,9 @@ namespace DevIL.Unmanaged {
         [DllImportAttribute(ILDLL, EntryPoint = "ilKeyColour", CallingConvention = CallingConvention.StdCall)]
         public static extern void SetKeyColor(float red, float green, float blue, float alpha);
 
+        public static void SetKeyColor(Color color) {
+            SetKeyColor(color.R, color.G, color.B, color.A);
+        }
 
         public static void SetMemoryHint(MemoryHint hint) {
             ilHint((uint)ILDefines.IL_MEM_SPEED_HINT, (uint) hint);

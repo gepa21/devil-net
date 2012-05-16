@@ -123,6 +123,7 @@ namespace DevILNet.Sample {
             if(m_activeImage == null) {
                 pictureBox.Image = null;
             } else {
+               
                 m_activeImage.Bind();
                 ImageInfo info = IL.GetImageInfo();
                 SD.Bitmap bitmap = new SD.Bitmap(info.Width, info.Height, SDI.PixelFormat.Format32bppArgb);

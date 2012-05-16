@@ -152,8 +152,18 @@ namespace DevIL {
         DXT1A = ILDefines.IL_DXT1A
     }
 
+    /// <summary>
+    /// Enumerates the image origin.
+    /// </summary>
     public enum OriginLocation {
+        /// <summary>
+        /// Origin is the lower left hand corner, ideal for OpenGL.
+        /// </summary>
         LowerLeft = ILDefines.IL_ORIGIN_LOWER_LEFT,
+
+        /// <summary>
+        /// Origin is the upper left hand corner, ideal for Direct3D.
+        /// </summary>
         UpperLeft = ILDefines.IL_ORIGIN_UPPER_LEFT
     }
 
@@ -170,15 +180,43 @@ namespace DevIL {
         BGRA32 = ILDefines.IL_PAL_BGRA32
     }
 
+    /// <summary>
+    /// Enumerates the compression algorithm DevIL uses.
+    /// </summary>
     public enum CompressionAlgorithm {
+        /// <summary>
+        /// No compression
+        /// </summary>
         None = ILDefines.IL_COMPRESS_NONE,
+
+        /// <summary>
+        /// Use run-length encoding (RLE).
+        /// </summary>
         RLE = ILDefines.IL_COMPRESS_RLE,
+
+        /// <summary>
+        /// ZLib compression
+        /// </summary>
         ZLib = ILDefines.IL_COMPRESS_ZLIB,
     }
 
+    /// <summary>
+    /// Enumerates DevIL compression library options.
+    /// </summary>
     public enum CompressionLibrary {
+        /// <summary>
+        /// Use the default compression.
+        /// </summary>
         Default,
+
+        /// <summary>
+        /// Use Nvidia compression.
+        /// </summary>
         Nvidia,
+
+        /// <summary>
+        /// Use Squish compression.
+        /// </summary>
         Squish
     }
 

@@ -93,6 +93,7 @@
     <Compile Include="ImageImporter.cs" />
     <Compile Include="ImageStates.cs" />
     <Compile Include="ManagedImage.cs" />
+    <Compile Include="Structures.cs" />
     <Compile Include="TransformEngine.cs" />
     <Compile Include="Unmanaged\Enums.cs" />
     <Compile Include="MemoryHelper.cs" />

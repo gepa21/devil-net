@@ -316,6 +316,49 @@ namespace DevIL {
             return clone;
         }
 
+        public void Resize(int width, int height, int depth, SamplingFilter filter, bool regenerateMipMaps) {
+
+            width = Math.Max(1, width);
+            height = Math.Max(1, height);
+            depth = Math.Max(1, depth);
+
+            Bind();
+
+            SamplingFilter oldFilter = ILU.GetSamplingFilter();
+            ILU.SetSamplingFilter(filter);
+            ILU.Scale(width, height, depth);
+
+            if(regenerateMipMaps) {
+                Bind();
+                ILU.BuildMipMaps();
+            }
+
+            ILU.SetSamplingFilter(oldFilter);
+        }
+
+        public void ResizeToNearestPowerOfTwo(SamplingFilter filter, bool regenerateMipMaps) {
+            int width = Width;
+            int height = Height;
+            int depth = Depth;
+
+            width = MemoryHelper.RoundToNearestPowerOfTwo(width);
+            height = MemoryHelper.RoundToNearestPowerOfTwo(height);
+            depth = MemoryHelper.RoundToNearestPowerOfTwo(depth);
+
+            Bind();
+
+            SamplingFilter oldFilter = ILU.GetSamplingFilter();
+            ILU.SetSamplingFilter(filter);
+            ILU.Scale(width, height, depth);
+
+            if(regenerateMipMaps) {
+                Bind();
+                ILU.BuildMipMaps();
+            }
+
+            ILU.SetSamplingFilter(oldFilter);
+        }
+
         public ImageInfo GetImageInfo() {
             ImageInfo info = new ImageInfo();
             if(CheckValid(this)) {
