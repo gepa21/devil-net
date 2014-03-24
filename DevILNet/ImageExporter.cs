@@ -54,6 +54,11 @@ namespace DevIL {
             return IL.SaveImage(filename);
         }
 
+        public void SetDXTCompressionFormat(CompressedDataFormat Format)
+        {
+            IL.SetDxtcFormat(Format);
+        }
+
         public bool SaveImage(Image image, ImageType imageType, String filename) {
             if(!image.IsValid || imageType == ImageType.Unknown || String.IsNullOrEmpty(filename)) {
                 return false;
